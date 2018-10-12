@@ -1,0 +1,8 @@
+# Ignore db
+myportal/*.sqlite3
+
+#Ignore Compiled python files
+*.pyc
+
+#other Ignore Files
+*.log
