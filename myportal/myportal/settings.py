@@ -25,7 +25,7 @@ SECRET_KEY = 'vrdq-w(^ww((5&9!l7r$vb&bx&5rt&4@xi$=(ptpm8k&gm$xq!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.20']
+ALLOWED_HOSTS = ['192.168.1.20', '127.0.0.1', 'localhost']
 
 
 # Application definition
@@ -78,6 +78,14 @@ WSGI_APPLICATION = 'myportal.wsgi.application'
 
 DATABASES = {
     'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'sdss2_0',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': '',
+        'PORT': '',
+    },
+    'sqlite3': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }

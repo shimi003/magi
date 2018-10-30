@@ -2,9 +2,167 @@
 <html>
   <head lang = 'ja'>
     <meta charset="utf-8">
-    <title>sdss</title>
+    <title>{{ view_name }}</title>
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script type='text/javascript'>
+      window.onload = function(){
+        var today = new Date();
+        //today.setDate(today.getDate());
+        var yyyy = today.getFullYear();
+        var mm = ("0"+(today.getMonth()+1)).slice(-2);
+        var dd = ("0"+today.getDate()).slice(-2);
+        //console.log(yyyy+'-'+mm+'-'+dd); //デバッグ用
+        document.getElementById("journal_date").value=yyyy+'-'+mm+'-'+dd;
+      }
+    </script>
+    <script type='text/javascript'>
+      $("input[name='br_1_a']").blur(function(){
+        if( $(this).val() != ''){
+          if( $(this).val().match(/^[0-9]+$/) == null){
+            alart('数字を入力してください');
+          }
+        }
+      });
+      function chknum(obj){
+        if(obj.value != ''){
+          if(obj.value.match(/^[0-9,]+$/) ==null){
+            //alert('数字のみを入力してください');
+            chknum[obj.name] = false;
+            if(!!obj.style) obj.style.backgroundColor='lightpink';
+          }
+          else{
+            if(!!obj.style) obj.style.backgroundColor='white';
+            chknum[obj.name] = true;
+          }
+        }
+        else{
+          if(!!obj.style) obj.style.backgroundColor='white';
+          chknum[obj.name] = true;
+        }
+      };
+    </script>
   </head>
   <body>
-    {{ name }} welcome to sdss2.0!
+    <h1>{{ view_name }}</h1>
+    <form method="post" name="journal_regist_form" action="regist">
+      {% csrf_token %}
+      <input type="date" name = 'journal_date' id='journal_date' />
+      <table>
+        <tr><th>借方勘定科目</th><th>借方金額</th><th>貸方勘定科目</th><th>貸方金額</th></tr>
+        <tr>
+          <td>
+            <select name="br_1_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="br_1_a" onblur="chknum(this)" />
+          </td>
+          <td>
+            <select name="cr_1_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="cr_1_a" onblur="chknum(this)" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <select name="br_2_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="br_2_a" onblur="chknum(this)" />
+          </td>
+          <td>
+            <select name="cr_2_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="cr_2_a" onblur="chknum(this)" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <select name="br_3_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="br_3_a" onblur="chknum(this)" />
+          </td>
+          <td>
+            <select name="cr_3_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="cr_3_a" onblur="chknum(this)" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <select name="br_4_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="br_4_a" onblur="chknum(this)" />
+          </td>
+          <td>
+            <select name="cr_4_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="cr_4_a" onblur="chknum(this)" />
+          </td>
+        </tr>
+        <tr>
+          <td>
+            <select name="br_5_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="br_5_a" onblur="chknum(this)" />
+          </td>
+          <td>
+            <select name="cr_5_c">
+              {% for d, i in accbot_dic.items %}
+                <option value='{{ d }}'>{{ i }}</option>
+              {% endfor %}
+            </select>
+          </td>
+          <td>
+            <input type="text" name="cr_5_a" onblur="chknum(this)" />
+          </td>
+        </tr>
+      </table>
+      <input type="submit" value="登録" name='regist' />
+      <input type="reset" value="キャンセル" name='cancel' />
+    </form >
   </body>
 </html>
