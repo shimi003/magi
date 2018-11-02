@@ -59,7 +59,7 @@ class Budget(models.Model):
 class Journal(models.Model):
     uid = models.AutoField(primary_key=True)
     date = models.CharField(max_length=10)
-    group_id = models.CharField(max_length=14)
+    group_id = models.CharField(max_length=20)
     br_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='br_acc_bot_uid', related_name='journal_acc_br_id')
     br_amount = models.IntegerField(blank=True, null=True)
     cr_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='cr_acc_bot_uid', related_name='journal_acc_cr_id')

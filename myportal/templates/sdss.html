@@ -7,6 +7,7 @@
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <script type='text/javascript'>
       window.onload = function(){
+        // jsよりpythonのが得意そうだからdjangoから渡す
         var today = new Date();
         //today.setDate(today.getDate());
         var yyyy = today.getFullYear();
@@ -24,6 +25,8 @@
           }
         }
       });
+
+      // 金額入力欄の入力チェック（数字以外で背景をピンクにする）
       function chknum(obj){
         if(obj.value != ''){
           if(obj.value.match(/^[0-9,]+$/) ==null){
@@ -41,13 +44,48 @@
           chknum[obj.name] = true;
         }
       };
+      function chkForm(){
+
+        //TODO 勘定科目が有効な場合のみ足す
+        var br_sum =  (isNaN(parseInt($("input[name='br_1_a']").val()))? 0 : parseInt($("input[name='br_1_a']").val()))
+                    + (isNaN(parseInt($("input[name='br_2_a']").val()))? 0 : parseInt($("input[name='br_2_a']").val()))
+                    + (isNaN(parseInt($("input[name='br_3_a']").val()))? 0 : parseInt($("input[name='br_3_a']").val()))
+                    + (isNaN(parseInt($("input[name='br_4_a']").val()))? 0 : parseInt($("input[name='br_4_a']").val()))
+                    + (isNaN(parseInt($("input[name='br_5_a']").val()))? 0 : parseInt($("input[name='br_5_a']").val()))
+        console.log("br_1_a = " + $("input[name='br_1_a']").val());
+        console.log("br_sum = " + br_sum);
+
+        var cr_sum =  (isNaN(parseInt($("input[name='cr_1_a']").val()))? 0 : parseInt($("input[name='cr_1_a']").val()))
+                    + (isNaN(parseInt($("input[name='cr_2_a']").val()))? 0 : parseInt($("input[name='cr_2_a']").val()))
+                    + (isNaN(parseInt($("input[name='cr_3_a']").val()))? 0 : parseInt($("input[name='cr_3_a']").val()))
+                    + (isNaN(parseInt($("input[name='cr_4_a']").val()))? 0 : parseInt($("input[name='cr_4_a']").val()))
+                    + (isNaN(parseInt($("input[name='cr_5_a']").val()))? 0 : parseInt($("input[name='cr_5_a']").val()))
+        console.log("cr_sum = " + cr_sum);
+
+        // 貸借の合計金額が０でなく、かつ一致したときのみページ遷移する
+        if (br_sum != 0 && br_sum == cr_sum){
+          return true;
+        }
+        else{
+          //登録されない理由を返す
+          if (br_sum == 0){
+            $("#error").text('登録に失敗しました（金額未入力）')
+          }
+          else if(br_sum != cr_sum){
+            $("#error").text('登録に失敗しました（貸借合計不一致）')
+          }
+          return false;
+        }
+      };
     </script>
   </head>
   <body>
     <h1>{{ view_name }}</h1>
-    <form method="post" name="journal_regist_form" action="regist">
+    <form method="post" name="journal_regist_form" action="regist/">
       {% csrf_token %}
-      <input type="date" name = 'journal_date' id='journal_date' />
+      <!-- <input type="date" name = 'journal_date' id='journal_date' value='{{ today }}' /> -->
+      <lable>日付</label>
+      <input type="date" name = 'journal_date' id='journal_date' value="{{ journal_date }}" />
       <table>
         <tr><th>借方勘定科目</th><th>借方金額</th><th>貸方勘定科目</th><th>貸方金額</th></tr>
         <tr>
@@ -161,8 +199,14 @@
           </td>
         </tr>
       </table>
-      <input type="submit" value="登録" name='regist' />
-      <input type="reset" value="キャンセル" name='cancel' />
+      <label>コメントとか</label>
+      <input type="text" name="note" cols="100" rows="3"/> <br />
+      <input type="submit" value="登録" name='regist' onclick="return chkForm()"/>
+      <input type="reset" value="キャンセル" name='cancel'/>
+      <br / >
+      <br / >
+      <label id = "error"></label><br />
+      <label id = "status">{{ message }}</label>
     </form >
   </body>
 </html>
