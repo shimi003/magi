@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 
 # Create your views here.
 from django.http import HttpResponse
@@ -10,12 +10,14 @@ import logging as log
 
 def index(request):
     #dic = {'name': 'shimi003', 'test': 'tekitoudata'}
-    accbot_qs = db.AccBot.objects.all()
+    accbot_qs = db.AccBot.objects.order_by('sort_order').all()
     accbot_dic = getUidAndName(accbot_qs)
     #accbot_list = simplejson.dumps(accbot_qs, ensure_ascii=False, default=encode_accbot)
+    accbot_list = getAccountList(accbot_qs)
     context = {
         'journal_date': datetime.now().strftime('%Y-%m-%d'),
         'accbot_dic': accbot_dic,
+        'account_list': accbot_list,
         'view_name': 'sdss 2.0 journal input',
         'message': '',
     }
@@ -27,8 +29,9 @@ def regist(request):
     #TODO 入力チェックとUI側の入力チェックもこっちへ移す
     #TODO 処理が冗長なのでリスト化するなりしてスッキリさせる
     groupid = datetime.now().strftime('%Y%m%d%H%M%S%f')
-    strdate = datetime.now().strftime('%Y%m%d')
-    if request.POST['br_1_a'] != 0 or request.POST['cr_1_a'] != 0:
+    strdate = request.POST['journal_date'].replace('-','')
+    log.info('regist date as: ' + strdate)
+    if isIntAndNotZero(request.POST['br_1_a']) or isIntAndNotZero(request.POST['cr_1_a']):
         db.Journal.objects.create(
             date = strdate,
             group_id = groupid,
@@ -36,11 +39,11 @@ def regist(request):
             br_amount = request.POST['br_1_a'] if request.POST['br_1_a'].isdigit() else 0,
             cr_acc_bot_uid = db.AccBot.objects.get(uid=request.POST['cr_1_c']),
             cr_amount = request.POST['cr_1_a'] if request.POST['cr_1_a'].isdigit() else 0,
-            note = '',
+            note = request.POST['note'],
         )
         log.info('register journal object')
 
-    if request.POST['br_2_a'] != 0 or request.POST['cr_2_a'] != 0:
+    if isIntAndNotZero(request.POST['br_2_a']) or isIntAndNotZero(request.POST['cr_2_a']):
         db.Journal.objects.create(
             date = strdate,
             group_id = groupid,
@@ -52,7 +55,7 @@ def regist(request):
         )
         log.info('register journal object')
 
-    if request.POST['br_3_a'] != 0 or request.POST['cr_3_a'] != 0:
+    if isIntAndNotZero(request.POST['br_3_a']) or isIntAndNotZero(request.POST['cr_3_a']):
         db.Journal.objects.create(
             date = strdate,
             group_id = groupid,
@@ -64,7 +67,7 @@ def regist(request):
         )
         log.info('register journal object')
 
-    if request.POST['br_4_a'] != 0 or request.POST['cr_4_a'] != 0:
+    if isIntAndNotZero(request.POST['br_4_a']) or isIntAndNotZero(request.POST['cr_4_a']):
         db.Journal.objects.create(
             date = strdate,
             group_id = groupid,
@@ -76,7 +79,7 @@ def regist(request):
         )
         log.info('register journal object')
 
-    if request.POST['br_5_a'] != 0 or request.POST['cr_5_a'] != 0:
+    if isIntAndNotZero(request.POST['br_5_a']) or isIntAndNotZero(request.POST['cr_5_a']):
         db.Journal.objects.create(
             date = strdate,
             group_id = groupid,
@@ -88,19 +91,16 @@ def regist(request):
         )
         log.info('register journal object')
 
-    accbot_qs = db.AccBot.objects.all()
-    accbot_dic = getUidAndName(accbot_qs)
-    context = {
-        'journal_date': datetime.now().strftime('%Y-%m-%d'),
-        'accbot_dic': accbot_dic,
-        'view_name': 'sdss 2.0 journal input',
-        'message': 'registered',
-    }
-
-    return render(request, 'sdss.html', context)
-
-
-
+    #accbot_qs = db.AccBot.objects.all()
+    #accbot_dic = getUidAndName(accbot_qs)
+    #context = {
+    #    'journal_date': datetime.now().strftime('%Y-%m-%d'),
+    #    'accbot_dic': accbot_dic,
+    #    'view_name': 'sdss 2.0 journal input',
+    #    'message': 'registered',
+    #}
+    return redirect("/sdss")
+    #return render(request, 'sdss.html', context)
 
 
 def templateTest(request):
@@ -115,3 +115,24 @@ def getUidAndName(qs_accbot):
         else:
             d[entry.uid] = entry.name
     return d
+
+def getAccountList(qs_accbot):
+    d = []
+    for entry in qs_accbot:
+        d.append({
+            'id':     entry.uid,
+            'label':  entry.name_ac,
+            'value':  entry.name,
+        })
+    return d
+
+def isIntAndNotZero(str):
+    try:
+        a = int(str)
+        if a == 0:
+            return False
+        else:
+            return True
+    except Exception as e:
+        log.info('an Exception in isIntAndNotZero: ' + str)
+        return False
