@@ -103,6 +103,35 @@ def regist(request):
     #return render(request, 'sdss.html', context)
 
 
+def journal(request):
+    # | uid | date | group_id | br_acc_bot_name | br_amount | ... |
+    #dic = {'name': 'shimi003', 'test': 'tekitoudata'}
+    journal_qs = db.Journal.objects.all()
+    journal_list = getJournalList(journal_qs)
+    context = {
+        'journal_list': journal_list,
+        'view_name': 'sdss 2.0 journal view',
+        'message': '',
+    }
+    return render(request, 'journal.html', context)
+
+
+def bs(request):
+    # |       | 2018/10 | 2018/11 | 2018/12 |
+    # | ICOCA |   2,100 |   5,900 |   9,200 |
+    # |  現金  |  13,110 |  24,670 |     ... |
+
+    return HttpResponse("not implement!")
+
+
+def pl(request):
+    return HttpResponse("not implement!")
+
+
+def cs(request):
+    return HttpResponse("not implement!")
+
+
 def templateTest(request):
     dic = {'name': 'shimi003', 'test': 'tekitoudata'}
     return render(request, 'sdss.html', dic)
@@ -125,6 +154,23 @@ def getAccountList(qs_accbot):
             'value':  entry.name,
         })
     return d
+
+
+def getJournalList(qs_journal):
+    d = []
+    for entry in qs_journal:
+        d.append({
+            'id':        entry.uid,
+            'date':      entry.date[:4] + '/' + entry.date[4:6] + '/'+ entry.date[6:8],
+            'group_id':  entry.group_id,
+            'br_name':   entry.br_acc_bot_uid.name,
+            'br_amount': entry.br_amount,
+            'cr_name':   entry.cr_acc_bot_uid.name,
+            'cr_amount': entry.cr_amount,
+            'note':      entry.note,
+        })
+    return d
+
 
 def isIntAndNotZero(str):
     try:
