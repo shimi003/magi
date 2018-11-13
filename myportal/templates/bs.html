@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<!-- TODO BSとPLの処理およびテンプレートがほぼ共通なので統一する -->
+<!-- TODO 見た目をもうちょい今風にしたい・・・。 -->
 <html>
   <head lang = 'ja'>
     <meta charset="utf-8">
@@ -37,28 +39,21 @@
   </head>
   <body>
     <h1>{{ view_name }}</h1>
+    <h2>{{ target_year_month }}</h2>
       <table>
         <tr>
-          <th>uid</th>
-          <th>日付</th>
-          <!-- <th>グループID</th> -->
-          <th>借方勘定科目</th>
-          <th>借方金額</th>
-          <th>貸方勘定科目</th>
-          <th>貸方金額</th>
-          <th>特記事項</th>
+          <th>勘定科目</th>
+          {% for m in month_list %}
+            <th>{{ m }}</th>
+          {% endfor %}
         </tr>
         {% load humanize %}
-        {% for d in journal_list %}
+        {% for k, v in bs_list.items %}
           <tr>
-            <td>{{ d.id }}</td>
-            <td>{{ d.date }}</td>
-            <!-- <td>{{ d.group_id }}</td> -->
-            <td align="center">{{ d.br_name }}</td>
-            <td align="right">{{ d.br_amount|intcomma }}</td>
-            <td align="center">{{ d.cr_name }}</td>
-            <td align="right">{{ d.cr_amount|intcomma }}</td>
-            <td>{{ d.note }}</td>
+            <td>{{ k }}</td>
+            {% for amount in v %}
+              <td align="right">{{ amount|intcomma }}</td>
+            {% endfor %}
           <tr>
         {% endfor %}
     </table>
