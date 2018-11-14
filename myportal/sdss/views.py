@@ -18,14 +18,29 @@ def index(request):
     accbot_dic = getUidAndName(accbot_qs)
     #accbot_list = simplejson.dumps(accbot_qs, ensure_ascii=False, default=encode_accbot)
     accbot_list = getAccountList(accbot_qs)
+    accbot_listgroup = getAccountListByGroup()
     context = {
         'journal_date': datetime.now().strftime('%Y-%m-%d'),
         'accbot_dic': accbot_dic,
         'account_list': accbot_list,
+        'listgroup':    accbot_listgroup,
         'view_name': 'sdss 2.0 journal input',
         'message': '',
     }
     return render(request, 'sdss.html', context)
+  #return HttpResponse("Hello, world, It's django!")
+
+
+def test(request):
+    accbot_qs = db.AccBot.objects.order_by('sort_order').all()
+    accbot_dic = getUidAndName(accbot_qs)
+    #accbot_list = simplejson.dumps(accbot_qs, ensure_ascii=False, default=encode_accbot)
+    accbot_list = getAccountList(accbot_qs)
+    #dic = {'name': 'shimi003', 'test': 'tekitoudata'}
+    context = {
+        'acclist': accbot_list,
+    }
+    return render(request, 'sdss_input.html', context)
   #return HttpResponse("Hello, world, It's django!")
 
 def regist(request):
@@ -129,8 +144,11 @@ def bs(request):
     for i in range(12):
         month_list.append('{:02}'.format(i+1))
 
+    bsmidlist = getBSinMid()
+
     context = {
         'bs_list': list,
+        'bs_mid_list': bsmidlist,
         'month_list': month_list,
         'view_name': 'sdss 2.0 BS view',
         'target_year_month': '2018/10',
@@ -176,7 +194,21 @@ def getAccountList(qs_accbot):
     d = []
     for entry in qs_accbot:
         d.append({
-            'id':     entry.uid,
+            'uid':    entry.uid,
+            'label':  entry.name_ac,
+            'value':  entry.name,
+        })
+    return d
+
+def getAccountListByGroup():
+    qs_bot = db.AccBot.objects.order_by('sort_order').all()
+    d = {}
+    for entry in qs_bot:
+        if not entry.acc_mid_uid.name in d:
+            d[entry.acc_mid_uid.name] = []
+
+        d[entry.acc_mid_uid.name].append({
+            'uid':    entry.uid,
             'label':  entry.name_ac,
             'value':  entry.name,
         })
@@ -258,6 +290,61 @@ def getBS(year = 0):
         return {}
 
 #TODO 未来のも出てるのでそのへんの調整
+
+def getBSinMid(year = 0):
+    try:
+        if int(year) == 0:
+            year = datetime.now().year
+        elif int(year) < 1800 or 2100 < int(year):
+            raise Error("input illigal year into getBS:" + str(year))
+        else:
+            raise Error("unkown error in getBS input year is " + str(year))
+
+        dic = {}
+        #BS勘定科目の一覧取得
+        bslist_qs = db.AccMid.objects.filter(
+            acc_top_uid__union_bs1_pl2_cs3=1).order_by('sort_order')
+
+        #取得したBS勘定科目ごとに、さらに月ごとに集計する。前年末残高を初期値として使用する
+        for acc in bslist_qs:
+            #貸借係数（借方側が1、貸方側が-1）
+            isBr = bslist_qs.get(uid=acc.uid).acc_top_uid.is_br
+            log.info('acc.uid = ' + str(acc.uid) + ' isBr = ' + str(isBr))
+            #前年度末までの残高を算出（初期値）
+            init_qs = db.Journal.objects.filter(date__lt=str(year))
+            init_br = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+            init_cr = init_qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+
+            #empty対策
+            init_br = 0 if not init_br else init_br
+            init_cr = 0 if not init_cr else init_cr
+
+            initial = (init_br - init_cr) * isBr
+
+            d = []
+            for i in range(12):
+                #各月の集計
+                currentYearMonth = str(year) + '{:02d}'.format(i + 1)
+                nextYearMonth = getNextMonth(currentYearMonth)
+                qs = db.Journal.objects.filter(date__range=(currentYearMonth,nextYearMonth))
+                curr_br = qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+                curr_cr = qs.filter(cr_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+                #empty対策
+                curr_br = 0 if not curr_br else curr_br
+                curr_cr = 0 if not curr_cr else curr_cr
+                #前のと足す
+                initial += (curr_br - curr_cr) * isBr
+
+                d.append(initial if initial != 0 else '')
+            dic[acc.name] = d
+
+        return dic
+
+    except Exception as e:
+        print(e.args + ' 何らかの例外が発生しました')
+        return {}
+
+
 
 def getPL(year = 0):
     try:

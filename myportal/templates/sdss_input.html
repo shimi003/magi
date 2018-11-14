@@ -48,6 +48,17 @@
       <input type="text" id="tags">
     </div>
 
+    <div class="ui-widget">
+      <label for="tags">Tags: </label>
+      <select>
+        {% for d in acclist %}
+          <option label = "{{ d.value }}">{{ d.label }} / {{ d.value }} </option>
+        {% endfor %}
+      </select>
+    </div>
+
+
+
 
   </body>
 </html>

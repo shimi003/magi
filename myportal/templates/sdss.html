@@ -93,146 +93,177 @@
     </script>
   </head>
   <body>
+    <a href="/sdss/">input</a>
+    <a href="/sdss/bs/">bs</a>
+    <a href="/sdss/pl/">pl</a>
+    <a href="/sdss/journal/">journal</a>
     <h1>{{ view_name }}</h1>
     <form method="post" name="journal_regist_form" action="regist/">
       {% csrf_token %}
       <!-- <input type="date" name = 'journal_date' id='journal_date' value='{{ today }}' /> -->
       <lable>日付</label>
       <input type="date" name = 'journal_date' id='journal_date' value="{{ journal_date }}" />
-<div class="ui-widget">
-  <datalist id="acclist">
-    {% for d in account_list %}
-      <option value="{{ d.value }}" label="{{ d.value }}[{{ d.label }}]"></option>
-    {% endfor %}
-  </datalist>
-      <table>
-        <tr><th>借方勘定科目</th><th>借方金額</th><th>貸方勘定科目</th><th>貸方金額</th></tr>
-        <tr>
-            <!-- for test from -->
-<!--            <input id="ac" autocomplete="on" list="acclist">
+      <div class="ui-widget">
+        <table>
+          <tr>
+            <th>借方勘定科目</th>
+            <th>借方金額</th>
+            <th>貸方勘定科目</th>
+            <th>貸方金額</th>
+          </tr>
+          <tr>
+              <td>
 
-<input name="br_1_c" id="autocomp" >
-  {% for d, i in accbot_dic.items %}
-    <option value='{{ d }}'>{{ i }}</option>
-  {% endfor %}
-</select>
-</td>
-<td>
-<input type="text" name="br_1_a" onblur="chknum(this)" />
-</td>
--->
-            <!-- for test end -->
+                <select name="br_1_c">
+                  {% for key, valuelist in listgroup.items %}
+                    <optgroup label="{{ key }}">
+                      {% for val in valuelist %}
+                        <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                      {% endfor %}
+                    </optgroup>
+                  {% endfor %}
+                </select>
+              </td>
+              <td>
+                <input type="text" name="br_1_a" onblur="chknum(this)" />
+              </td>
             <td>
-              <select name="br_1_c">
-                {% for d, i in accbot_dic.items %}
-                  <option value='{{ d }}'>{{ i }}</option>
+              <select name="cr_1_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
                 {% endfor %}
               </select>
             </td>
             <td>
-              <input type="text" name="br_1_a" onblur="chknum(this)" />
+              <input type="text" name="cr_1_a" onblur="chknum(this)" />
             </td>
-          <td>
-            <select name="cr_1_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="cr_1_a" onblur="chknum(this)" />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <select name="br_2_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="br_2_a" onblur="chknum(this)" />
-          </td>
-          <td>
-            <select name="cr_2_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="cr_2_a" onblur="chknum(this)" />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <select name="br_3_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="br_3_a" onblur="chknum(this)" />
-          </td>
-          <td>
-            <select name="cr_3_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="cr_3_a" onblur="chknum(this)" />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <select name="br_4_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="br_4_a" onblur="chknum(this)" />
-          </td>
-          <td>
-            <select name="cr_4_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="cr_4_a" onblur="chknum(this)" />
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <select name="br_5_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="br_5_a" onblur="chknum(this)" />
-          </td>
-          <td>
-            <select id="combobox" name="cr_5_c">
-              {% for d, i in accbot_dic.items %}
-                <option value='{{ d }}'>{{ i }}</option>
-              {% endfor %}
-            </select>
-          </td>
-          <td>
-            <input type="text" name="cr_5_a" onblur="chknum(this)" />
-          </td>
-        </tr>
-      </table>
-</div>
+          </tr>
+          <tr>
+            <td>
+              <select name="br_2_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="br_2_a" onblur="chknum(this)" />
+            </td>
+            <td>
+              <select name="cr_2_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="cr_2_a" onblur="chknum(this)" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select name="br_3_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="br_3_a" onblur="chknum(this)" />
+            </td>
+            <td>
+              <select name="cr_3_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="cr_3_a" onblur="chknum(this)" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select name="br_4_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="br_4_a" onblur="chknum(this)" />
+            </td>
+            <td>
+              <select name="cr_4_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="cr_4_a" onblur="chknum(this)" />
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <select name="br_5_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="br_5_a" onblur="chknum(this)" />
+            </td>
+            <td>
+              <select id="combobox" name="cr_5_c">
+                {% for key, valuelist in listgroup.items %}
+                  <optgroup label="{{ key }}">
+                    {% for val in valuelist %}
+                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                    {% endfor %}
+                  </optgroup>
+                {% endfor %}
+              </select>
+            </td>
+            <td>
+              <input type="text" name="cr_5_a" onblur="chknum(this)" />
+            </td>
+          </tr>
+        </table>
+      </div>
 
       <label>コメントとか</label>
       <input type="text" name="note" cols="100" rows="3"/> <br />
@@ -243,72 +274,5 @@
       <label id = "error"></label><br />
       <label id = "status">{{ message }}</label>
     </form >
-
-
-    <select id="combobox">
-      <option value="test1">test1</option>
-      <option value="test2">test2</option>
-      <option value="test3">test3</option>
-      <option value="test4">test4</option>
-    </select>
-    <script type='text/javascript'>
-/*      function removeIfInvalid(element) {
-        var value = $( element ).val(),
-          matcher = new RegExp( "^" + $.ui.autocomplete.escapeRegex( value ) + "$", "i" ),
-          valid = false;
-        select.children( "option" ).each(function() {
-          if ( $( this ).text().match( matcher ) ) {
-            this.selected = valid = true;
-            return false;
-          }
-        });
-      };
-*/
-
-      // autocomplete 日本語対応
-      // http://shanabrian.com/web/jquery/autocomplete01.php
-/*      $('input[id=autocomplete_test]').autocomplete({
-        source: function(request, response) {
-          var re   = new RegExp('^(' + request.term + ')');
-          var list = [];
-          var datalist = {{ account_list|safe }};
-          console.log("processing autocomplete input ...");
-          $.each(datalist, function(i, values) {
-            if(values.label.match(re) || values.value.match(re)) {
-                console.log("push -> " + values.value);
-                list.push(values.value);
-            }
-          });
-          response(list);
-        }
-      });
-*/
-/*      $('select[id=combobox]').autocomplete({
-        source: function(request, response){
-          var re   = new RegExp('^(' + request.term + ')');
-          var list = [];
-          var datalist = {{ account_list|safe }};
-          console.log("processing autocomplete combo ...");
-          $.each(datalist, function(i, values) {
-            if(values.label.match(re) || values.value.match(re)) {
-                console.log("push -> " + values.value);
-                list.push(values.value);
-            }
-          });
-          response(list);
-        },
-        select: function( event, ui ) {
-          ui.item.option.selected = true;
-          that._trigger( "selected", event, {
-            item: ui.item.option
-          });
-        },
-        change: function( event, ui ) {
-          if ( !ui.item )
-            return removeIfInvalid( this );
-        }
-      });
-*/
-    </script>
   </body>
 </html>
