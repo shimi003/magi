@@ -10,5 +10,5 @@ urlpatterns = [
     path(r'bs/', views.bs, name='bs'),
     path(r'pl/', views.pl, name='pl'),
     path(r'cs/', views.pl, name='cs'),
-    path(r'template/', views.templateTest, name='templateTest'),
+    path(r'summary/', views.summary, name='summary'),
 ]

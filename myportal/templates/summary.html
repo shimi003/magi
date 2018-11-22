@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!-- TODO BSとPLの処理およびテンプレートがほぼ共通なので統一する -->
+<!-- TODO 見た目をもうちょい今風にしたい・・・。 -->
+<html>
+  <head lang = 'ja'>
+    <meta charset="utf-8">
+    <title>{{ view_name }}</title>
+    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
+    <script src="js/autocomplete_kana.js"></script>
+    <script type="text/javascript">
+    // テーブルをストライプ表示に
+      $(function() {
+          $('tr:nth-child(odd)').addClass('odd');
+      });
+    </script>
+    <style type="text/css">
+      <!--
+      table{
+      	    margin: 15px auto 10px auto;
+	          border-collapse: collapse;
+    	}
+    	th{
+    	    padding:5px;
+    	    background:#266;
+    	    border:1px solid #777;
+    	    color: #fff;
+    	}
+    	td{
+    	    border:solid 1px #777;
+    	    background:#eee;
+    	    padding:5px;
+    	}
+    	table tr.odd td {
+    	    background: #ccc;
+    	}
+      -->
+    </style>
+  </head>
+  <body>
+    <a href="/sdss/">input</a>
+    <a href="/sdss/summary/">summary</a>
+    <a href="/sdss/bs/">bs</a>
+    <a href="/sdss/pl/">pl</a>
+    <a href="/sdss/journal/">journal</a>
+    {% load humanize %}
+    <h1>{{ view_name }}</h1>
+    <h2>{{ target_year_month }}</h2>
+      <table>
+        <tr>
+          <th>勘定科目</th>
+          {% for m in month_list %}
+            <th>{{ m }}</th>
+          {% endfor %}
+        </tr>
+        <tr><td colspan="13">BS summary</td></tr>
+        {% for k, v in bs_list.items %}
+          <tr>
+            <td>{{ k }}</td>
+            {% for amount in v %}
+              <td align="right">{{ amount|intcomma }}</td>
+            {% endfor %}
+          <tr>
+        {% endfor %}
+        <tr></tr>
+        <tr><td colspan="13">PL summary</td></tr>
+        {% for k, v in pl_list.items %}
+          <tr>
+            <td>{{ k }}</td>
+            {% for amount in v %}
+              <td align="right">
+                {% if amount < 0 %}<font color="red">{% endif %}
+                {{ amount|intcomma }}
+                {% if amount < 0 %}</font>{% endif %}
+              </td>
+            {% endfor %}
+          <tr>
+        {% endfor %}
+    </table>
+  </body>
+</html>

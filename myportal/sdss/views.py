@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect
+import warnings
 
 # Create your views here.
 from django.http import HttpResponse
@@ -11,12 +12,16 @@ from datetime import datetime
 import logging as log
 from dateutil.relativedelta import relativedelta
 
+AccType = {
+    'BS': 1,
+    'PL': 2,
+    'CS': 3,
+}
 
+#
 def index(request):
-    #dic = {'name': 'shimi003', 'test': 'tekitoudata'}
     accbot_qs = db.AccBot.objects.order_by('sort_order').all()
     accbot_dic = getUidAndName(accbot_qs)
-    #accbot_list = simplejson.dumps(accbot_qs, ensure_ascii=False, default=encode_accbot)
     accbot_list = getAccountList(accbot_qs)
     accbot_listgroup = getAccountListByGroup()
     context = {
@@ -28,20 +33,28 @@ def index(request):
         'message': '',
     }
     return render(request, 'sdss.html', context)
-  #return HttpResponse("Hello, world, It's django!")
 
 
 def test(request):
-    accbot_qs = db.AccBot.objects.order_by('sort_order').all()
-    accbot_dic = getUidAndName(accbot_qs)
-    #accbot_list = simplejson.dumps(accbot_qs, ensure_ascii=False, default=encode_accbot)
-    accbot_list = getAccountList(accbot_qs)
-    #dic = {'name': 'shimi003', 'test': 'tekitoudata'}
+
+    list = getAccountMidAggregateInYear(AccType['PL'])
+
     context = {
-        'acclist': accbot_list,
+        'pl_list': list,
+        'month_list': getMonthList(),
+        'view_name': 'sdss 2.0 PL view',
+        'target_year_month': '2018/10',
+        'message': '',
     }
-    return render(request, 'sdss_input.html', context)
-  #return HttpResponse("Hello, world, It's django!")
+    return render(request, 'pl.html', context)
+
+
+def getMonthList():
+    month_list = []
+    for i in range(12):
+        month_list.append('{:02}'.format(i+1))
+    return month_list
+
 
 def regist(request):
     #入力チェックと登録用データ作成
@@ -50,6 +63,7 @@ def regist(request):
     groupid = datetime.now().strftime('%Y%m%d%H%M%S%f')
     strdate = request.POST['journal_date'].replace('-','')
     log.info('regist date as: ' + strdate)
+
     if isIntAndNotZero(request.POST['br_1_a']) or isIntAndNotZero(request.POST['cr_1_a']):
         db.Journal.objects.create(
             date = strdate,
@@ -110,21 +124,24 @@ def regist(request):
         )
         log.info('register journal object')
 
-    #accbot_qs = db.AccBot.objects.all()
-    #accbot_dic = getUidAndName(accbot_qs)
-    #context = {
-    #    'journal_date': datetime.now().strftime('%Y-%m-%d'),
-    #    'accbot_dic': accbot_dic,
-    #    'view_name': 'sdss 2.0 journal input',
-    #    'message': 'registered',
-    #}
     return redirect("/sdss")
-    #return render(request, 'sdss.html', context)
+
+
+def isIntAndNotZero(str):
+    try:
+        a = int(str)
+        if a == 0:
+            return False
+        else:
+            return True
+    except Exception as e:
+        log.info('an Exception in isIntAndNotZero: ' + str)
+        return False
 
 
 def journal(request):
     # | uid | date | group_id | br_acc_bot_name | br_amount | ... |
-    #dic = {'name': 'shimi003', 'test': 'tekitoudata'}
+    # TODO extract year, month ...etc
     journal_qs = db.Journal.objects.all()
     journal_list = getJournalList(journal_qs)
     context = {
@@ -135,21 +152,29 @@ def journal(request):
     return render(request, 'journal.html', context)
 
 
+def summary(request):
+    bslist = getAccountMidAggregateInYear(AccType['BS'])
+    pllist = getAccountMidAggregateInYear(AccType['PL'])
+    context = {
+        'bs_list': bslist,
+        'pl_list': pllist,
+        'month_list': getMonthList(),
+        'view_name': 'sdss 2.0 BS PL summary view',
+        'target_year': '2018',
+        'message': '',
+    }
+    return render(request, 'summary.html', context)
+
+
 def bs(request):
-    # |       | 2018/10 | 2018/11 | 2018/12 |
+    # |       |   10    |    11   |    12   |
     # | ICOCA |   2,100 |   5,900 |   9,200 |
     # |  現金  |  13,110 |  24,670 |     ... |
-    list = getBS()
-    month_list = []
-    for i in range(12):
-        month_list.append('{:02}'.format(i+1))
-
-    bsmidlist = getBSinMid()
-
+    bslist = getAccountAggregateInYear(AccType['BS'])
     context = {
         'bs_list': list,
-        'bs_mid_list': bsmidlist,
-        'month_list': month_list,
+        'bs_mid_list': bslist,
+        'month_list': getMonthList(),
         'view_name': 'sdss 2.0 BS view',
         'target_year_month': '2018/10',
         'message': '',
@@ -157,15 +182,12 @@ def bs(request):
     return render(request, 'bs.html', context)
 
 
+#TODO 未使用項目をリストに入れないようにする
 def pl(request):
-    list = getPL()
-    month_list = []
-    for i in range(12):
-        month_list.append('{:02}'.format(i+1))
-
+    pllist = getAccountAggregateInYear(AccType['PL'])
     context = {
-        'pl_list': list,
-        'month_list': month_list,
+        'pl_list': pllist,
+        'month_list': getMonthList(),
         'view_name': 'sdss 2.0 PL view',
         'target_year_month': '2018/10',
         'message': '',
@@ -174,12 +196,8 @@ def pl(request):
 
 
 def cs(request):
-    return HttpResponse("not implement!")
+    raise NotImplementedError()
 
-
-def templateTest(request):
-    dic = {'name': 'shimi003', 'test': 'tekitoudata'}
-    return render(request, 'sdss.html', dic)
 
 def getUidAndName(qs_accbot):
     d = {}
@@ -190,6 +208,7 @@ def getUidAndName(qs_accbot):
             d[entry.uid] = entry.name
     return d
 
+
 def getAccountList(qs_accbot):
     d = []
     for entry in qs_accbot:
@@ -199,6 +218,7 @@ def getAccountList(qs_accbot):
             'value':  entry.name,
         })
     return d
+
 
 def getAccountListByGroup():
     qs_bot = db.AccBot.objects.order_by('sort_order').all()
@@ -231,97 +251,49 @@ def getJournalList(qs_journal):
         })
     return d
 
-#TODO BSとPLの処理およびテンプレートがほぼ同じなため統一する
 #TODO すでに処理が重そうな気がするので今後パフォーマンスに関する何らかの処置が必要かも
 #TODO 未来のも出てるのでそのへんの調整
+#TODO 貸借差額=当期損益の計算および表示
 
-def getBS(year = 0):
+def checkYear(strYear):
     try:
-
-        if int(year) == 0:
-            year = datetime.now().year
-        elif int(year) < 1800 or 2100 < int(year):
-            raise Error("input illigal year into getBS:" + str(year))
+        if 1800 < int(strYear) and int(strYear) < 2100:
+            return int(strYear)
         else:
-            raise Error("unkown error in getBS input year is " + str(year))
+            raise ValueError
+    except ValueError:
+            warnings.warn("input illigal year into checkYear:" + str(strYear))
+            return datetime.now().year
+
+
+def getAccountMidAggregateInYear(AccType_BS1PL2CS3, year = 0):
+    try:
+        year = checkYear(year)
 
         dic = {}
-        #BS勘定科目の一覧取得
-        bslist_qs = db.AccBot.objects.filter(
-            acc_mid_uid__acc_top_uid__union_bs1_pl2_cs3=1).order_by('sort_order')
+        accListQs = db.AccMid.objects.filter(
+            acc_top_uid__union_bs1_pl2_cs3=AccType_BS1PL2CS3).order_by('sort_order')
 
-        #取得したBS勘定科目ごとに、さらに月ごとに集計する。前年末残高を初期値として使用する
-        for acc in bslist_qs:
-            #貸借係数（借方側が1、貸方側が-1）
-            isBr = db.AccBot.objects.get(uid=acc.uid).acc_mid_uid.acc_top_uid.is_br
-            log.info('acc.uid = ' + str(acc.uid) + ' isBr = ' + str(isBr))
-            #前年度末までの残高を算出（初期値）
+        profit  = [0] * 12
+        loss    = [0] * 12
+        proloss = [0] * 12
+
+        for acc in accListQs:
+            brCrDirection = acc.acc_top_uid.is_br
+            log.info('AccMid.name = ' + str(acc.name) + ' brCrDirection = ' + str(brCrDirection))
+            #前年度末までの残高を算出（初期値） BS only
             init_qs = db.Journal.objects.filter(date__lt=str(year))
-            init_br = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-            init_cr = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+            init_br = init_qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+            init_cr = init_qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
 
             #empty対策
             init_br = 0 if not init_br else init_br
             init_cr = 0 if not init_cr else init_cr
 
-            initial = (init_br - init_cr) * isBr
+            current = (init_br - init_cr) * brCrDirection
 
             d = []
-            for i in range(12):
-                #各月の集計
-                currentYearMonth = str(year) + '{:02d}'.format(i + 1)
-                nextYearMonth = getNextMonth(currentYearMonth)
-                qs = db.Journal.objects.filter(date__range=(currentYearMonth,nextYearMonth))
-                curr_br = qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-                curr_cr = qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
-                #empty対策
-                curr_br = 0 if not curr_br else curr_br
-                curr_cr = 0 if not curr_cr else curr_cr
-                #前のと足す
-                initial += (curr_br - curr_cr) * isBr
 
-                d.append(initial if initial != 0 else '')
-            dic[acc.name] = d
-
-        return dic
-
-    except Exception as e:
-        print(e.args + ' 何らかの例外が発生しました')
-        return {}
-
-#TODO 未来のも出てるのでそのへんの調整
-
-def getBSinMid(year = 0):
-    try:
-        if int(year) == 0:
-            year = datetime.now().year
-        elif int(year) < 1800 or 2100 < int(year):
-            raise Error("input illigal year into getBS:" + str(year))
-        else:
-            raise Error("unkown error in getBS input year is " + str(year))
-
-        dic = {}
-        #BS勘定科目の一覧取得
-        bslist_qs = db.AccMid.objects.filter(
-            acc_top_uid__union_bs1_pl2_cs3=1).order_by('sort_order')
-
-        #取得したBS勘定科目ごとに、さらに月ごとに集計する。前年末残高を初期値として使用する
-        for acc in bslist_qs:
-            #貸借係数（借方側が1、貸方側が-1）
-            isBr = bslist_qs.get(uid=acc.uid).acc_top_uid.is_br
-            log.info('acc.uid = ' + str(acc.uid) + ' isBr = ' + str(isBr))
-            #前年度末までの残高を算出（初期値）
-            init_qs = db.Journal.objects.filter(date__lt=str(year))
-            init_br = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-            init_cr = init_qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
-
-            #empty対策
-            init_br = 0 if not init_br else init_br
-            init_cr = 0 if not init_cr else init_cr
-
-            initial = (init_br - init_cr) * isBr
-
-            d = []
             for i in range(12):
                 #各月の集計
                 currentYearMonth = str(year) + '{:02d}'.format(i + 1)
@@ -332,12 +304,29 @@ def getBSinMid(year = 0):
                 #empty対策
                 curr_br = 0 if not curr_br else curr_br
                 curr_cr = 0 if not curr_cr else curr_cr
-                #前のと足す
-                initial += (curr_br - curr_cr) * isBr
-
-                d.append(initial if initial != 0 else '')
+                #BS+=init, PL=curr
+                if   AccType_BS1PL2CS3 == AccType['BS']:
+                    current += (curr_br - curr_cr) * brCrDirection
+                elif AccType_BS1PL2CS3 == AccType['PL']:
+                    current = (curr_br - curr_cr) * brCrDirection
+                    if brCrDirection > 0:
+                        loss[i]    += current
+                        proloss[i] -= current
+                    else:
+                        profit[i]  += current
+                        proloss[i] += current
+                else:
+                    raise NotImplementedError()
+                
+                d.append(current if current != 0 else '')
             dic[acc.name] = d
 
+        # if Acc = PL, add loss, profit, sum.
+        if AccType_BS1PL2CS3 == AccType['PL']:
+            dic['費用計'] = loss
+            dic['利益計'] = profit
+            dic['損益'] = proloss
+        
         return dic
 
     except Exception as e:
@@ -345,28 +334,34 @@ def getBSinMid(year = 0):
         return {}
 
 
-
-def getPL(year = 0):
+def getAccountAggregateInYear(AccType_BS1PL2CS3, year = 0):
     try:
-        if int(year) == 0:
-            year = datetime.now().year
-        elif int(year) < 1800 or 2100 < int(year):
-            raise Error("input illigal year into getPL:" + str(year))
-        else:
-            raise Error("unkown error in getBS input year is " + str(year))
+        year = checkYear(year)
 
         dic = {}
-        #PL勘定科目の一覧取得
-        pllist_qs = db.AccBot.objects.filter(
-            acc_mid_uid__acc_top_uid__union_bs1_pl2_cs3=2).order_by('sort_order')
+        accListQs = db.AccBot.objects.filter(
+            acc_mid_uid__acc_top_uid__union_bs1_pl2_cs3=AccType_BS1PL2CS3).order_by('sort_order')
 
-        #取得したBS勘定科目ごとに、さらに月ごとに集計する。前年末残高を初期値として使用する
-        for acc in pllist_qs:
-            #貸借係数（借方側が1、貸方側が-1）
-            isBr = db.AccBot.objects.get(uid=acc.uid).acc_mid_uid.acc_top_uid.is_br
-            log.info('acc.uid = ' + str(acc.uid) + ' isBr = ' + str(isBr))
+        profit  = [0] * 12
+        loss    = [0] * 12
+        proloss = [0] * 12
+
+        for acc in accListQs:
+            brCrDirection = acc.acc_mid_uid.acc_top_uid.is_br
+            log.info('acc.uid = ' + str(acc.uid) + ' brCrDirection = ' + str(brCrDirection))
+            #前年度末までの残高を算出（初期値） BS only
+            init_qs = db.Journal.objects.filter(date__lt=str(year))
+            init_br = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+            init_cr = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+
+            #empty対策
+            init_br = 0 if not init_br else init_br
+            init_cr = 0 if not init_cr else init_cr
+
+            current = (init_br - init_cr) * brCrDirection
 
             d = []
+
             for i in range(12):
                 #各月の集計
                 currentYearMonth = str(year) + '{:02d}'.format(i + 1)
@@ -377,18 +372,34 @@ def getPL(year = 0):
                 #empty対策
                 curr_br = 0 if not curr_br else curr_br
                 curr_cr = 0 if not curr_cr else curr_cr
-                #前のと足す
-                curr = (curr_br - curr_cr) * isBr
-                d.append(curr if curr != 0 else '')
+                #BS+=init, PL=curr
+                if   AccType_BS1PL2CS3 == AccType['BS']:
+                    current += (curr_br - curr_cr) * brCrDirection
+                elif AccType_BS1PL2CS3 == AccType['PL']:
+                    current = (curr_br - curr_cr) * brCrDirection
+                    if brCrDirection > 0:
+                        loss[i]    += current
+                        proloss[i] -= current
+                    else:
+                        profit[i]  += current
+                        proloss[i] += current
+                else:
+                    raise NotImplementedError()
+                
+                d.append(current if current != 0 else '')
             dic[acc.name] = d
 
+        # if Acc = PL, add loss, profit, sum.
+        if AccType_BS1PL2CS3 == AccType['PL']:
+            dic['費用計'] = loss
+            dic['利益計'] = profit
+            dic['損益'] = proloss
+        
         return dic
 
     except Exception as e:
         print(e.args + ' 何らかの例外が発生しました')
         return {}
-
-
 
 
 def getNextMonth(currentYearMonth=''):
@@ -409,14 +420,3 @@ def getNextMonth(currentYearMonth=''):
 
     return nextYearMonth
 
-
-def isIntAndNotZero(str):
-    try:
-        a = int(str)
-        if a == 0:
-            return False
-        else:
-            return True
-    except Exception as e:
-        log.info('an Exception in isIntAndNotZero: ' + str)
-        return False
