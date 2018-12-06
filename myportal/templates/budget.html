@@ -43,27 +43,28 @@
     <a href="/sdss/pl/">pl</a>
     <a href="/sdss/journal/">journal</a>
     <h1>{{ view_name }}</h1>
-    <h2>{{ target_year_month }}</h2>
-      <table>
+    <table>
+      <tr>
+        <th>勘定科目</th>
+        <th>使用開始日</th>
+        <th>使用終了日(予定日)</th>
+        <th>予算金額(月額)</th>
+        <th>特記事項</th>
+      </tr>
+      {% for key, valuelist in budget_list.items %}
         <tr>
-          <th>勘定科目</th>
-          {% for m in month_list %}
-            <th>{{ m }}</th>
-          {% endfor %}
+          <td>{{ key }}</td>
         </tr>
-        {% load humanize %}
-        {% for k, v in pl_list.items %}
+        {% for val in valuelist %}
           <tr>
-            <td>{{ k }}</td>
-            {% for amount in v %}
-              <td align="right">
-                {% if amount < 0 %}<font color="red">{% endif %}
-                  {{ amount|intcomma }}
-                {% if amount < 0 %}</font>{% endif %}
-              </td>
-            {% endfor %}
-          <tr>
+            <td>{{ val.name }}</td>
+            <td>{{ val.for }}</td>
+            <td>{{ val.from }}</td>
+            <td>{{ val.amount }}</td>
+            <td>{{ val.note }}</td>
+          </tr>
         {% endfor %}
+      {% endfor %}
     </table>
   </body>
 </html>

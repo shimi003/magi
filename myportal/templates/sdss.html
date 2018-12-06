@@ -74,7 +74,7 @@
             $("#error").text('登録に失敗しました（金額未入力）')
           }
           else if(br_sum != cr_sum){
-            $("#error").text('登録に失敗しました（貸借合計不一致）')
+            $("#error").text('登録に失敗しました（貸借合計不一致） br=' + br_sum + ' cr=' + cr_sum)
           }
           return false;
         }

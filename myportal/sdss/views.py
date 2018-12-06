@@ -12,10 +12,21 @@ from datetime import datetime
 import logging as log
 from dateutil.relativedelta import relativedelta
 
-AccType = {
+ReportType = {
     'BS': 1,
     'PL': 2,
     'CS': 3,
+}
+
+AccType = {
+    'Asset': 1,
+    'Liabilitie': 2,
+    'NetAsset': 3,
+    'Cost': 4,
+    'Plofit': 5,
+    'CashFlowFromOperation': 6,
+    'CashFlowFromInvestment': 7,
+    'CashFlowFromFinancial': 8,
 }
 
 #
@@ -35,9 +46,58 @@ def index(request):
     return render(request, 'sdss.html', context)
 
 
+def budget(request):
+    context = {
+        'budget_list': getCostBudgetList(),
+    }
+    return render(request, 'budget.html', context)
+
+
+def getCostBudgetList():
+    qs_bot = db.AccBot.objects.filter(acc_mid_uid__acc_top_uid=AccType['Cost']).order_by('sort_order')
+    d = {}
+    total = 0
+    for entry in qs_bot:
+        if not entry.acc_mid_uid.name in d:
+            d[entry.acc_mid_uid.name] = []
+        
+        for_field = ''
+        from_field = ''
+        amount = ''
+        note = ''
+
+        if len(db.Budget.objects.filter(acc_bot_uid=entry.uid)) > 0:
+            for_field = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].for_field
+            from_field = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].from_field
+            amount = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].amount_per_month
+            note = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].note
+
+        d[entry.acc_mid_uid.name].append({
+            'name':   entry.name,
+            'for':    for_field,
+            'from':   from_field,
+            'amount': amount,
+            'note':   note,
+        })
+        if amount != '':
+            total += int(amount)
+    d['費用予算(月間)合計'] = []
+    d['費用予算(月間)合計'].append({
+        'amount': total,
+    })
+    return d
+
+
+def getEmptyOrValue(str):
+    if str is None:
+        return '';
+    else:
+        return str;
+
+
 def test(request):
 
-    list = getAccountMidAggregateInYear(AccType['PL'])
+    list = getAccountMidAggregateInYear(ReportType['PL'])
 
     context = {
         'pl_list': list,
@@ -142,7 +202,7 @@ def isIntAndNotZero(str):
 def journal(request):
     # | uid | date | group_id | br_acc_bot_name | br_amount | ... |
     # TODO extract year, month ...etc
-    journal_qs = db.Journal.objects.all()
+    journal_qs = db.Journal.objects.order_by('date')
     journal_list = getJournalList(journal_qs)
     context = {
         'journal_list': journal_list,
@@ -153,8 +213,8 @@ def journal(request):
 
 
 def summary(request):
-    bslist = getAccountMidAggregateInYear(AccType['BS'])
-    pllist = getAccountMidAggregateInYear(AccType['PL'])
+    bslist = getAccountMidAggregateInYear(ReportType['BS'])
+    pllist = getAccountMidAggregateInYear(ReportType['PL'])
     context = {
         'bs_list': bslist,
         'pl_list': pllist,
@@ -170,7 +230,7 @@ def bs(request):
     # |       |   10    |    11   |    12   |
     # | ICOCA |   2,100 |   5,900 |   9,200 |
     # |  現金  |  13,110 |  24,670 |     ... |
-    bslist = getAccountAggregateInYear(AccType['BS'])
+    bslist = getAccountAggregateInYear(ReportType['BS'])
     context = {
         'bs_list': list,
         'bs_mid_list': bslist,
@@ -184,7 +244,7 @@ def bs(request):
 
 #TODO 未使用項目をリストに入れないようにする
 def pl(request):
-    pllist = getAccountAggregateInYear(AccType['PL'])
+    pllist = getAccountAggregateInYear(ReportType['PL'])
     context = {
         'pl_list': pllist,
         'month_list': getMonthList(),
@@ -238,7 +298,6 @@ def getAccountListByGroup():
 def getJournalList(qs_journal):
     d = []
     for entry in qs_journal:
-
         d.append({
             'id':        entry.uid,
             'date':      entry.date[:4] + '/' + entry.date[4:6] + '/'+ entry.date[6:8],
@@ -266,13 +325,13 @@ def checkYear(strYear):
             return datetime.now().year
 
 
-def getAccountMidAggregateInYear(AccType_BS1PL2CS3, year = 0):
+def getAccountMidAggregateInYear(ReportType_BS1PL2CS3, year = 0):
     try:
         year = checkYear(year)
 
         dic = {}
         accListQs = db.AccMid.objects.filter(
-            acc_top_uid__union_bs1_pl2_cs3=AccType_BS1PL2CS3).order_by('sort_order')
+            acc_top_uid__union_bs1_pl2_cs3=ReportType_BS1PL2CS3).order_by('sort_order')
 
         profit  = [0] * 12
         loss    = [0] * 12
@@ -305,9 +364,9 @@ def getAccountMidAggregateInYear(AccType_BS1PL2CS3, year = 0):
                 curr_br = 0 if not curr_br else curr_br
                 curr_cr = 0 if not curr_cr else curr_cr
                 #BS+=init, PL=curr
-                if   AccType_BS1PL2CS3 == AccType['BS']:
+                if   ReportType_BS1PL2CS3 == ReportType['BS']:
                     current += (curr_br - curr_cr) * brCrDirection
-                elif AccType_BS1PL2CS3 == AccType['PL']:
+                elif ReportType_BS1PL2CS3 == ReportType['PL']:
                     current = (curr_br - curr_cr) * brCrDirection
                     if brCrDirection > 0:
                         loss[i]    += current
@@ -322,7 +381,7 @@ def getAccountMidAggregateInYear(AccType_BS1PL2CS3, year = 0):
             dic[acc.name] = d
 
         # if Acc = PL, add loss, profit, sum.
-        if AccType_BS1PL2CS3 == AccType['PL']:
+        if ReportType_BS1PL2CS3 == ReportType['PL']:
             dic['費用計'] = loss
             dic['利益計'] = profit
             dic['損益'] = proloss
@@ -334,13 +393,13 @@ def getAccountMidAggregateInYear(AccType_BS1PL2CS3, year = 0):
         return {}
 
 
-def getAccountAggregateInYear(AccType_BS1PL2CS3, year = 0):
+def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
     try:
         year = checkYear(year)
 
         dic = {}
         accListQs = db.AccBot.objects.filter(
-            acc_mid_uid__acc_top_uid__union_bs1_pl2_cs3=AccType_BS1PL2CS3).order_by('sort_order')
+            acc_mid_uid__acc_top_uid__union_bs1_pl2_cs3=ReportType_BS1PL2CS3).order_by('sort_order')
 
         profit  = [0] * 12
         loss    = [0] * 12
@@ -373,9 +432,9 @@ def getAccountAggregateInYear(AccType_BS1PL2CS3, year = 0):
                 curr_br = 0 if not curr_br else curr_br
                 curr_cr = 0 if not curr_cr else curr_cr
                 #BS+=init, PL=curr
-                if   AccType_BS1PL2CS3 == AccType['BS']:
+                if   ReportType_BS1PL2CS3 == ReportType['BS']:
                     current += (curr_br - curr_cr) * brCrDirection
-                elif AccType_BS1PL2CS3 == AccType['PL']:
+                elif ReportType_BS1PL2CS3 == ReportType['PL']:
                     current = (curr_br - curr_cr) * brCrDirection
                     if brCrDirection > 0:
                         loss[i]    += current
@@ -390,7 +449,7 @@ def getAccountAggregateInYear(AccType_BS1PL2CS3, year = 0):
             dic[acc.name] = d
 
         # if Acc = PL, add loss, profit, sum.
-        if AccType_BS1PL2CS3 == AccType['PL']:
+        if ReportType_BS1PL2CS3 == ReportType['PL']:
             dic['費用計'] = loss
             dic['利益計'] = profit
             dic['損益'] = proloss

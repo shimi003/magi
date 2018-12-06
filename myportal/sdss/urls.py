@@ -7,6 +7,7 @@ urlpatterns = [
     path(r'regist/', views.regist, name='regist'),
     path(r'test/', views.test, name='test'),
     path(r'journal/', views.journal, name='journal'),
+    path(r'budget/', views.budget, name='budget'),
     path(r'bs/', views.bs, name='bs'),
     path(r'pl/', views.pl, name='pl'),
     path(r'cs/', views.pl, name='cs'),
