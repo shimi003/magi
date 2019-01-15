@@ -213,8 +213,8 @@ def journal(request):
 
 
 def summary(request):
-    bslist = getAccountMidAggregateInYear(ReportType['BS'])
-    pllist = getAccountMidAggregateInYear(ReportType['PL'])
+    bslist = getAccountMidAggregateInYear(ReportType['BS'], 2018)
+    pllist = getAccountMidAggregateInYear(ReportType['PL'], 2018)
     context = {
         'bs_list': bslist,
         'pl_list': pllist,
@@ -230,9 +230,30 @@ def bs(request):
     # |       |   10    |    11   |    12   |
     # | ICOCA |   2,100 |   5,900 |   9,200 |
     # |  現金  |  13,110 |  24,670 |     ... |
-    bslist = getAccountAggregateInYear(ReportType['BS'])
+    bslist = getAccountAggregateInYear(ReportType['BS'], datetime.now().year)
+    yearList = ['2018','2019']
     context = {
         'bs_list': list,
+        'year_list': yearList,
+        'bs_mid_list': bslist,
+        'month_list': getMonthList(),
+        'view_name': 'sdss 2.0 BS view',
+        'target_year_month': '2018/10',
+        'message': '',
+    }
+    return render(request, 'bs.html', context)
+
+def bs_year(request, year):
+    # |       |   10    |    11   |    12   |
+    # | ICOCA |   2,100 |   5,900 |   9,200 |
+    # |  現金  |  13,110 |  24,670 |     ... |
+    year = checkYear(year)
+    bslist = getAccountAggregateInYear(ReportType['BS'], year)
+    yearList = ['2018','2019']
+    context = {
+        'bs_list': list,
+        'year': year,
+        'year_list': yearList,
         'bs_mid_list': bslist,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 BS view',
@@ -244,9 +265,24 @@ def bs(request):
 
 #TODO 未使用項目をリストに入れないようにする
 def pl(request):
-    pllist = getAccountAggregateInYear(ReportType['PL'])
+    pllist = getAccountAggregateInYear(ReportType['PL'], datetime.now().year)
     context = {
         'pl_list': pllist,
+        'month_list': getMonthList(),
+        'view_name': 'sdss 2.0 PL view',
+        'target_year_month': '2018/10',
+        'message': '',
+    }
+    return render(request, 'pl.html', context)
+
+
+#TODO 未使用項目をリストに入れないようにする
+def pl_year(request, year):
+    year = checkYear(year)
+    pllist = getAccountAggregateInYear(ReportType['PL'], year)
+    context = {
+        'pl_list': pllist,
+        'year': year,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 PL view',
         'target_year_month': '2018/10',
@@ -318,6 +354,8 @@ def checkYear(strYear):
     try:
         if 1800 < int(strYear) and int(strYear) < 2100:
             return int(strYear)
+        elif 0 == int(strYear):
+            return datetime.now().year
         else:
             raise ValueError
     except ValueError:
@@ -343,7 +381,7 @@ def getAccountMidAggregateInYear(ReportType_BS1PL2CS3, year = 0):
             #前年度末までの残高を算出（初期値） BS only
             init_qs = db.Journal.objects.filter(date__lt=str(year))
             init_br = init_qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-            init_cr = init_qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+            init_cr = init_qs.filter(cr_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
 
             #empty対策
             init_br = 0 if not init_br else init_br
@@ -357,27 +395,31 @@ def getAccountMidAggregateInYear(ReportType_BS1PL2CS3, year = 0):
                 #各月の集計
                 currentYearMonth = str(year) + '{:02d}'.format(i + 1)
                 nextYearMonth = getNextMonth(currentYearMonth)
-                qs = db.Journal.objects.filter(date__range=(currentYearMonth,nextYearMonth))
-                curr_br = qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-                curr_cr = qs.filter(cr_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
-                #empty対策
-                curr_br = 0 if not curr_br else curr_br
-                curr_cr = 0 if not curr_cr else curr_cr
-                #BS+=init, PL=curr
-                if   ReportType_BS1PL2CS3 == ReportType['BS']:
-                    current += (curr_br - curr_cr) * brCrDirection
-                elif ReportType_BS1PL2CS3 == ReportType['PL']:
-                    current = (curr_br - curr_cr) * brCrDirection
-                    if brCrDirection > 0:
-                        loss[i]    += current
-                        proloss[i] -= current
+                if currentYearMonth <= '{:04d}{:02d}'.format(datetime.now().year, datetime.now().month):
+                    qs = db.Journal.objects.filter(date__range=(currentYearMonth,nextYearMonth))
+                    curr_br = qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+                    curr_cr = qs.filter(cr_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+                    #empty対策
+                    curr_br = 0 if not curr_br else curr_br
+                    curr_cr = 0 if not curr_cr else curr_cr
+                    #BS+=init, PL=curr
+                    if   ReportType_BS1PL2CS3 == ReportType['BS']:
+                        current += (curr_br - curr_cr) * brCrDirection
+                    elif ReportType_BS1PL2CS3 == ReportType['PL']:
+                        current = (curr_br - curr_cr) * brCrDirection
+                        if brCrDirection > 0:
+                            loss[i]    += current
+                            proloss[i] -= current
+                        else:
+                            profit[i]  += current
+                            proloss[i] += current
                     else:
-                        profit[i]  += current
-                        proloss[i] += current
+                        raise NotImplementedError()
+                    
+                    d.append(current if current != 0 else '')
                 else:
-                    raise NotImplementedError()
-                
-                d.append(current if current != 0 else '')
+                    d.append('')
+                    
             dic[acc.name] = d
 
         # if Acc = PL, add loss, profit, sum.
@@ -393,6 +435,8 @@ def getAccountMidAggregateInYear(ReportType_BS1PL2CS3, year = 0):
         return {}
 
 
+'''
+'''
 def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
     try:
         year = checkYear(year)
@@ -404,20 +448,22 @@ def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
         profit  = [0] * 12
         loss    = [0] * 12
         proloss = [0] * 12
+        current = 0
 
         for acc in accListQs:
             brCrDirection = acc.acc_mid_uid.acc_top_uid.is_br
             log.info('acc.uid = ' + str(acc.uid) + ' brCrDirection = ' + str(brCrDirection))
             #前年度末までの残高を算出（初期値） BS only
-            init_qs = db.Journal.objects.filter(date__lt=str(year))
-            init_br = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-            init_cr = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+            if   ReportType_BS1PL2CS3 == ReportType['BS']:
+                init_qs = db.Journal.objects.filter(date__lt=str(year))
+                init_br = init_qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+                init_cr = init_qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
 
-            #empty対策
-            init_br = 0 if not init_br else init_br
-            init_cr = 0 if not init_cr else init_cr
+                #empty対策
+                init_br = 0 if not init_br else init_br
+                init_cr = 0 if not init_cr else init_cr
 
-            current = (init_br - init_cr) * brCrDirection
+                current = (init_br - init_cr) * brCrDirection
 
             d = []
 
@@ -425,27 +471,31 @@ def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
                 #各月の集計
                 currentYearMonth = str(year) + '{:02d}'.format(i + 1)
                 nextYearMonth = getNextMonth(currentYearMonth)
-                qs = db.Journal.objects.filter(date__range=(currentYearMonth,nextYearMonth))
-                curr_br = qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
-                curr_cr = qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
-                #empty対策
-                curr_br = 0 if not curr_br else curr_br
-                curr_cr = 0 if not curr_cr else curr_cr
-                #BS+=init, PL=curr
-                if   ReportType_BS1PL2CS3 == ReportType['BS']:
-                    current += (curr_br - curr_cr) * brCrDirection
-                elif ReportType_BS1PL2CS3 == ReportType['PL']:
-                    current = (curr_br - curr_cr) * brCrDirection
-                    if brCrDirection > 0:
-                        loss[i]    += current
-                        proloss[i] -= current
+
+                if currentYearMonth <= '{:04d}{:02d}'.format(datetime.now().year, datetime.now().month):
+                    qs = db.Journal.objects.filter(date__range=(currentYearMonth,nextYearMonth))
+                    curr_br = qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
+                    curr_cr = qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
+                    #empty対策
+                    curr_br = 0 if not curr_br else curr_br
+                    curr_cr = 0 if not curr_cr else curr_cr
+                    #BS+=init, PL=curr
+                    if   ReportType_BS1PL2CS3 == ReportType['BS']:
+                        current += (curr_br - curr_cr) * brCrDirection
+                    elif ReportType_BS1PL2CS3 == ReportType['PL']:
+                        current = (curr_br - curr_cr) * brCrDirection
+                        if brCrDirection > 0:
+                            loss[i]    += current
+                            proloss[i] -= current
+                        else:
+                            profit[i]  += current
+                            proloss[i] += current
                     else:
-                        profit[i]  += current
-                        proloss[i] += current
+                        raise NotImplementedError()
+                    
+                    d.append(current if current != 0 else '')
                 else:
-                    raise NotImplementedError()
-                
-                d.append(current if current != 0 else '')
+                    d.append('')
             dic[acc.name] = d
 
         # if Acc = PL, add loss, profit, sum.
@@ -461,6 +511,8 @@ def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
         return {}
 
 
+'''
+'''
 def getNextMonth(currentYearMonth=''):
     nextYearMonth = ''
     if currentYearMonth == '':

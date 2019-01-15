@@ -2,12 +2,12 @@ from django.test import TestCase
 from .views import checkYear
 
 # Create your tests here.
-class SdssTests(TestCase):
+class CheckYearTests(TestCase):
     def test_checkyear_in_normal1(self):
         year = checkYear('1801')
         self.assertEqual(year,1801)
 
-    def test_checkyear_in_normal(self):
+    def test_checkyear_in_normal2(self):
         year = checkYear('2099')
         self.assertEqual(year,2099)
 
@@ -30,3 +30,7 @@ class SdssTests(TestCase):
         from datetime import datetime
         year = checkYear('abc')
         self.assertEqual(year,datetime.now().year)
+
+class BsTests(TestCase):
+     
+    
