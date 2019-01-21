@@ -213,14 +213,28 @@ def journal(request):
 
 
 def summary(request):
-    bslist = getAccountMidAggregateInYear(ReportType['BS'], 2018)
-    pllist = getAccountMidAggregateInYear(ReportType['PL'], 2018)
+    bslist = getAccountMidAggregateInYear(ReportType['BS'], datetime.now().year)
+    pllist = getAccountMidAggregateInYear(ReportType['PL'], datetime.now().year)
     context = {
         'bs_list': bslist,
         'pl_list': pllist,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 BS PL summary view',
         'target_year': '2018',
+        'message': '',
+    }
+    return render(request, 'summary.html', context)
+
+def summary_year(request, year):
+    year = checkYear(year)
+    bslist = getAccountMidAggregateInYear(ReportType['BS'], year)
+    pllist = getAccountMidAggregateInYear(ReportType['PL'], year)
+    context = {
+        'bs_list': bslist,
+        'pl_list': pllist,
+        'month_list': getMonthList(),
+        'view_name': 'sdss 2.0 BS PL summary view',
+        'target_year': str(year),
         'message': '',
     }
     return render(request, 'summary.html', context)
@@ -238,7 +252,7 @@ def bs(request):
         'bs_mid_list': bslist,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 BS view',
-        'target_year_month': '2018/10',
+        'target_year': str(datetime.now().year),
         'message': '',
     }
     return render(request, 'bs.html', context)
@@ -257,35 +271,37 @@ def bs_year(request, year):
         'bs_mid_list': bslist,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 BS view',
-        'target_year_month': '2018/10',
+        'target_year': str(year),
         'message': '',
     }
     return render(request, 'bs.html', context)
 
 
-#TODO 未使用項目をリストに入れないようにする
 def pl(request):
     pllist = getAccountAggregateInYear(ReportType['PL'], datetime.now().year)
+    yearList = ['2018','2019']
     context = {
+        'year_list': yearList,
         'pl_list': pllist,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 PL view',
-        'target_year_month': '2018/10',
+        'target_year': str(datetime.now().year),
         'message': '',
     }
     return render(request, 'pl.html', context)
 
 
-#TODO 未使用項目をリストに入れないようにする
 def pl_year(request, year):
     year = checkYear(year)
     pllist = getAccountAggregateInYear(ReportType['PL'], year)
+    yearList = ['2018','2019']
     context = {
+        'year_list': yearList,
         'pl_list': pllist,
         'year': year,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 PL view',
-        'target_year_month': '2018/10',
+        'target_year': str(year),
         'message': '',
     }
     return render(request, 'pl.html', context)

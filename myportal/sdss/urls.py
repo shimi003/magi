@@ -14,4 +14,5 @@ urlpatterns = [
     path(r'pl/<year>', views.pl_year, name='pl_year'),
     path(r'cs/', views.cs, name='cs'),
     path(r'summary/', views.summary, name='summary'),
+    path(r'summary/<year>', views.summary_year, name='summary_year'),
 ]

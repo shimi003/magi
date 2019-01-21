@@ -1,32 +1,36 @@
 {% extends "base.html" %}
-{% block page_title %}{{ view_name }}{% endblock %}
 {% block content %}
-  <form method="post" name="journal_regist_form" action="/">
+  <form method="post" action="/">
     {% csrf_token %}
-    <select>
+    <select name="year">
     {% for year in year_list %}
-      <option>{{ year }}</option>
+      <option value="{{ year }}">{{ year }}</option>
     {% endfor %}
     </select>
-    <input type="button" value="ok" />
+    <input type="button" value="ok" onclick="moveYear()"/>
   </form>
-  <h1>{{ view_name }}</h1>
-  <h2>{{ target_year_month }}</h2>
-    <table>
-      <tr>
-        <th>勘定科目</th>
-        {% for m in month_list %}
-          <th>{{ m }}</th>
-        {% endfor %}
-      </tr>
-      {% load humanize %}
-      {% for k, v in bs_mid_list.items %}
-        <tr>
-          <td>{{ k }}</td>
-          {% for amount in v %}
-            <td align="right">{{ amount|intcomma }}</td>
-          {% endfor %}
-        <tr>
+  <table class="main">
+    <tr>
+      <th>勘定科目</th>
+      {% for m in month_list %}
+        <th>{{ m }}</th>
       {% endfor %}
+    </tr>
+    {% load humanize %}
+    {% for k, v in bs_mid_list.items %}
+      <tr>
+        <td>{{ k }}</td>
+        {% for amount in v %}
+          <td align="right">{{ amount|intcomma }}</td>
+        {% endfor %}
+      <tr>
+    {% endfor %}
   </table>
+{% endblock %}
+{% block extra_js %}
+  <script type="text/javascript">
+    function moveYear(){
+      window.location.href=$("select[name='year']").val();
+    };
+  </script>
 {% endblock %}

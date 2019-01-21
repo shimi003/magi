@@ -1,7 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
-  <h1>{{ view_name }}</h1>
-  <table>
+  <form method="post" action="/">
+    {% csrf_token %}
+    <select name="year">
+      {% for year in year_list %}
+        <option value="{{ year }}">{{ year }}</option>
+      {% endfor %}
+    </select>
+   <input type="button" value="ok" onclick="moveYear()"/>
+  </form>
+  <table class="main">
     <tr>
       <th>勘定科目</th>
       {% for m in month_list %}
@@ -22,4 +30,11 @@
       <tr>
     {% endfor %}
   </table>
+{% endblock %}
+{% block extra_js %}
+  <script type="text/javascript">
+    function moveYear(){
+      window.location.href=$("select[name='year']").val();
+    };
+  </script>
 {% endblock %}

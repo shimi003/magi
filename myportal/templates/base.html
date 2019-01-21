@@ -3,29 +3,30 @@
 <!-- TODO 見た目をもうちょい今風にしたい・・・。 -->
 <html>
   <head lang = 'ja'>
+    {% load static %}
     {% block page_title %}{% endblock %}
     <meta charset="utf-8">
-    <style type="text/css">
-        <!--
-        table{
-                margin: 15px auto 10px auto;
-                border-collapse: collapse;
-          }
-          th{
-              padding:5px;
-              background:#266;
-              border:1px solid #777;
-              color: #fff;
-          }
-          td{
-              border:solid 1px #777;
-              background:#eee;
-              padding:5px;
-          }
-          table tr.odd td {
-              background: #ccc;
-          }
-        -->
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Cache-Control" content="no-cache">
+    {# <link rel="stylesheet" type="text/css" href="{% static '/css/main.css?ver=20190116' %}"> #}
+    <style>
+      table{
+          margin: 15px auto 10px auto;
+          border-collapse: collapse;
+      }
+      th{
+          padding:5px;
+          background-color: #266;
+          border:1px solid #777;
+          color: #fff;
+      }
+      td{
+          border:solid 1px #777;
+          background-color:#eee;
+          padding:5px;
+      }
+      table.main tr:nth-child(2n+1) {background-color:#FFCCCC;}
+      table.main tr:nth-child(2n+0) {background-color:#CCFFCC;}
     </style>
     {% block extra_css %}{% endblock %}
   </head>
@@ -36,6 +37,8 @@
     <a href="/sdss/pl/">pl</a>
     <a href="/sdss/journal/">journal</a>
     <br />
+    <h1>{{ view_name }}</h1>
+    <h2>{{ target_year }}年の情報を表示しています。</h2>
     {% block content %}{% endblock %}
 
     <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
@@ -43,9 +46,9 @@
     <script src="js/autocomplete_kana.js"></script>
     <script type="text/javascript">
     // テーブルをストライプ表示に
-      $(function() {
-          $('tr:nth-child(odd)').addClass('odd');
-      });
+      //$(function() {
+      //    $('tr:nth-child(odd)').addClass('odd');
+      //});
     </script>
     {% block extra_js %}{% endblock %}
   </body>

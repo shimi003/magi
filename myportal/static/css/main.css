@@ -1,0 +1,17 @@
+table{
+    margin: 15px auto 10px auto;
+    border-collapse: collapse;
+}
+th{
+    padding:5px;
+    background-color: #266;
+    border:1px solid #777;
+    color: #fff;
+}
+td{
+    border:solid 1px #777;
+    background-color:#eee;
+    padding:5px;
+}
+table.main tr:nth-child(2n+1) {background-color:#FFCCCC;}
+table.main tr:nth-child(2n+0) {background-color:#CCFFCC;}
