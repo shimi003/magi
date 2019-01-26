@@ -7,9 +7,10 @@
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <script src="js/autocomplete_kana.js"></script>
 
+    // TODO divide below script to another js-file.
     <script type='text/javascript'>
       window.onload = function(){
-        // jsよりpythonのが得意そうだからdjangoから渡す
+        // TODO jsよりpythonのが得意そうだからdjangoから渡す
         var today = new Date();
         //today.setDate(today.getDate());
         var yyyy = today.getFullYear();
@@ -20,6 +21,7 @@
       }
     </script>
     <script type='text/javascript'>
+      // judge isNumber but... only br_1_a? is using??
       $("input[name='br_1_a']").blur(function(){
         if( $(this).val() != ''){
           if( $(this).val().match(/^[0-9]+$/) == null){
@@ -74,7 +76,14 @@
             $("#error").text('登録に失敗しました（金額未入力）')
           }
           else if(br_sum != cr_sum){
-            $("#error").text('登録に失敗しました（貸借合計不一致） br=' + br_sum + ' cr=' + cr_sum)
+            br_sum_forming = br_sum.toLocaleString();
+            cr_sum_forming = cr_sum.toLocaleString();
+            def_forming = (br_sum - cr_sum).toLocaleString();
+            $("#error").text('登録に失敗しました（貸借合計不一致） 借方合計=' + br_sum_forming + ' 貸方合計=' + cr_sum_forming + ' 差額=' + def_forming);
+          }
+          // koko niha konai hazu ...
+          else{
+            $("#error").text('登録に失敗しました（原因不明）');
           }
           return false;
         }
