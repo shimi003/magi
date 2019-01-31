@@ -29,6 +29,8 @@ AccType = {
     'CashFlowFromFinancial': 8,
 }
 
+GENKIN_ACC_BOT_UID = 6
+
 #
 def index(request):
     accbot_qs = db.AccBot.objects.order_by('sort_order').all()
@@ -60,7 +62,7 @@ def getCostBudgetList():
     for entry in qs_bot:
         if not entry.acc_mid_uid.name in d:
             d[entry.acc_mid_uid.name] = []
-        
+
         for_field = ''
         from_field = ''
         amount = ''
@@ -88,11 +90,90 @@ def getCostBudgetList():
     return d
 
 
+def suii(request, year=0, month=0, accID=GENKIN_ACC_BOT_UID):
+    if int(year) == 0 or int(year) < 2018 or 2100 < int(year):
+        year = datetime.now().year
+    else:
+        year = int(year)
+
+    if int(month) == 0  or int(month) < 1 or 12 < int(month):
+        month = datetime.now().month
+    else:
+        month = int(month)
+
+    list = getAccountSuii(year, month, accID)
+    accName = db.AccBot.objects.get(uid=accID).name
+    labels = []
+    for i in range(31):
+        labels.append(str(i+1))
+
+    context = {
+        'acc_suii_list': list,
+        'acc_name': accName,
+        'label': labels,
+        'view_name': 'sdss 2.0 Account Transition view',
+        'target_year_month': str(year) + '/' + str(month),
+        'message': '',
+    }
+    return render(request, 'suii.html', context)
+
+
+'''
+TODO can use in both BS and PL.
+create an account valiables only "BS", except PL.
+'''
+def getAccountSuii(year, month, accID):
+
+    # calc initial value
+    strDate = getYearMonth(year, month)
+    init_qs = db.Journal.objects.filter(date__lt=strDate)
+    init_br = init_qs.filter(br_acc_bot_uid=accID).aggregate(Sum('br_amount'))['br_amount__sum']
+    init_cr = init_qs.filter(cr_acc_bot_uid=accID).aggregate(Sum('cr_amount'))['cr_amount__sum']
+    br_direction = db.AccBot.objects.get(uid=accID).acc_mid_uid.acc_top_uid.is_br
+    total = 0
+    if br_direction > 0:
+        total = init_br - init_cr
+    else:
+        total = init_cr - init_br
+
+    # suming day by day ...
+    dic = []
+    nextMonth = getNextMonth(strDate)
+    qs = db.Journal.objects.filter(date__range=(strDate, nextMonth))
+    curr_br_qs = qs.filter(br_acc_bot_uid=accID)
+    curr_cr_qs = qs.filter(cr_acc_bot_uid=accID)
+    for i in range(31):
+        today_br_sum = getEmptyOrValueInt(curr_br_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('br_amount'))['br_amount__sum'])
+        today_cr_sum = getEmptyOrValueInt(curr_cr_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('cr_amount'))['cr_amount__sum'])
+
+        if br_direction > 0:
+            total += today_br_sum - today_cr_sum
+        else:
+            total += today_cr_sum - today_br_sum
+        dic.append(total)
+
+    return dic
+
+
+def getYearMonth(year, month):
+    if year == 0 or 2000 > year or year > 2100:
+        year = datetime.now().year
+    if month == 0 or 0 > month or month > 12:
+        month = datetime.now().month
+    return '{:04}'.format(year) + '{:02}'.format(month)
+
+
 def getEmptyOrValue(str):
     if str is None:
-        return '';
+        return ''
     else:
-        return str;
+        return str
+
+def getEmptyOrValueInt(input):
+    if input is None:
+        return 0
+    else:
+        return input
 
 
 def test(request):
@@ -363,7 +444,6 @@ def getJournalList(qs_journal):
     return d
 
 #TODO すでに処理が重そうな気がするので今後パフォーマンスに関する何らかの処置が必要かも
-#TODO 未来のも出てるのでそのへんの調整
 #TODO 貸借差額=当期損益の計算および表示
 
 def checkYear(strYear):
@@ -431,11 +511,11 @@ def getAccountMidAggregateInYear(ReportType_BS1PL2CS3, year = 0):
                             proloss[i] += current
                     else:
                         raise NotImplementedError()
-                    
+
                     d.append(current if current != 0 else '')
                 else:
                     d.append('')
-                    
+
             dic[acc.name] = d
 
         # if Acc = PL, add loss, profit, sum.
@@ -443,7 +523,7 @@ def getAccountMidAggregateInYear(ReportType_BS1PL2CS3, year = 0):
             dic['費用計'] = loss
             dic['利益計'] = profit
             dic['損益'] = proloss
-        
+
         return dic
 
     except Exception as e:
@@ -508,7 +588,7 @@ def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
                             proloss[i] += current
                     else:
                         raise NotImplementedError()
-                    
+
                     d.append(current if current != 0 else '')
                 else:
                     d.append('')
@@ -519,7 +599,7 @@ def getAccountAggregateInYear(ReportType_BS1PL2CS3, year = 0):
             dic['費用計'] = loss
             dic['利益計'] = profit
             dic['損益'] = proloss
-        
+
         return dic
 
     except Exception as e:
@@ -546,4 +626,3 @@ def getNextMonth(currentYearMonth=''):
         nextYearMonth = '{:04d}{:02d}'.format(year,month)
 
     return nextYearMonth
-
