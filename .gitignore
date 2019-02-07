@@ -1,8 +1,5 @@
-# Ignore db
-myportal/*.sqlite3
+/.venv/
+/__pycache__/
+/*.json
+/*.db
 
-#Ignore Compiled python files
-*.pyc
-
-#other Ignore Files
-*.log
