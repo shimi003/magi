@@ -1,7 +1,5 @@
 {% extends "base.html" %}
 {% block content %}
-  {{ target_year_month }}
-  {{ acc_name }}
   <form method="post" action="/">
     {% csrf_token %}
     <select name="year">
@@ -11,49 +9,31 @@
     </select>
     <input type="button" value="ok" onclick="moveYear()"/>
   </form>
-  <div style="width:75%;">
+  <div>
     <canvas id="myChart"></canvas>
   </div>
-  <table class="main">
-    <tr>
-      <th>勘定科目</th>
-      {% for m in month_list %}
-        <th>{{ m }}</th>
-      {% endfor %}
-    </tr>
-    {% load humanize %}
-    {% for k, v in bs_mid_list.items %}
-      <tr>
-        <td>{{ k }}</td>
-        {% for amount in v %}
-          <td align="right">{{ amount|intcomma }}</td>
-        {% endfor %}
-      <tr>
-    {% endfor %}
-  </table>
 {% endblock %}
 {% block extra_js %}
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
   <script type="text/javascript">
     function moveYear(){
       window.location.href=$("select[name='year']").val();
     };
   </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
   <script>
-    new Chart(document.getElementById("myChart"), {
-    //type: "doughnut",
-    type: "line",
-    data: {
-      labels: {{ label | safe }}, //["1", "2", "3"],
-      datasets: [
-        {
-            label: '{{ acc_name }}',
+    new Chart(document.getElementById("myChart"),{
+      type: "line",
+      data: {
+        labels: {{ label | safe }},
+        datasets: [
+          {
+            label: "現金",
             fill: false,
-            borderColor: "rgba(135,0,0,0.3)",
-            data: {{ acc_suii_list | safe }}, //[300, 50, 100],
-          },
+            borderColor: "rgba(0,135,135,10)",
+            data: {{ suii_list | safe }},
+          }
         ],
-      }
+      },
     });
   </script>
-{% endblock %}
+  {% endblock %}

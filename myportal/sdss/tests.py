@@ -1,5 +1,6 @@
 from django.test import TestCase
 from .views import checkYear
+import Utility as u
 
 # Create your tests here.
 class CheckYearTests(TestCase):
@@ -31,6 +32,43 @@ class CheckYearTests(TestCase):
         year = checkYear('abc')
         self.assertEqual(year,datetime.now().year)
 
-class BsTests(TestCase):
-     
-    
+class UtilityTest(TestCase):
+     def test_checkyear1():
+         year = u.checkYear(2017)
+        self.assertEqual(year,datetime.now().year)
+
+     def test_checkyear2():
+         year = u.checkYear(2019)
+        self.assertEqual(year,2019)
+
+     def test_checkyear3():
+         year = u.checkYear(2200)
+        self.assertEqual(year,datetime.now().year)
+
+     def test_checkyear4():
+         year = u.checkYear('2018')
+        self.assertEqual(year,datetime.now().year)
+
+     def test_checkyear5():
+         year = u.checkYear('ABC')
+        self.assertEqual(year,datetime.now().year)
+
+    def test_checkmonth1():
+        month = u.checkMonth(1)
+        self.assertEqual(month,1)
+
+    def test_checkmonth2():
+        month = u.checkMonth(12)
+        self.assertEqual(month,12)
+
+    def test_checkmonth3():
+        month = u.checkMonth(0)
+        self.assertEqual(month,datetime.now().month)
+
+    def test_checkmonth4():
+        month = u.checkMonth(13)
+        self.assertEqual(month,datetime.now().month)
+
+    def test_checkmonth5():
+        month = u.checkMonth('1')
+        self.assertEqual(month,datetime.now().month)

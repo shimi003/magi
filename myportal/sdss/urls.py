@@ -5,7 +5,7 @@ from . import views
 urlpatterns = [
     path(r'', views.index, name='index'),
     path(r'regist/', views.regist, name='regist'),
-    path(r'test/', views.test, name='test'),
+    #path(r'test/', views.test, name='test'),
     path(r'journal/', views.journal, name='journal'),
     path(r'budget/', views.budget, name='budget'),
     path(r'bs/', views.bs, name='bs'),
@@ -15,5 +15,6 @@ urlpatterns = [
     path(r'cs/', views.cs, name='cs'),
     path(r'summary/', views.summary, name='summary'),
     path(r'summary/<year>', views.summary_year, name='summary_year'),
+    path(r'suii/', views.suii, name='suii'),
     path(r'suii/<year>/<month>/<accID>', views.suii, name='suii'),
 ]
