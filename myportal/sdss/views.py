@@ -14,7 +14,7 @@ from dateutil.relativedelta import relativedelta
 
 from sdss.BS import BSClass as b
 from sdss.PL import PLClass as p
-import sdss.Utility as u 
+import sdss.Utility as u
 
 
 AccType = {
@@ -37,6 +37,8 @@ def index(request):
     accbot_list = getAccountList(accbot_qs)
     accbot_listgroup = getAccountListByGroup()
     context = {
+        'i_list': ['1','2','3','4','5'],
+        'b_or_c': ['br', 'cr'],
         'journal_date': datetime.now().strftime('%Y-%m-%d'),
         'accbot_dic': accbot_dic,
         'account_list': accbot_list,
@@ -173,9 +175,14 @@ def regist(request):
     register_corresp.append({'br_a': 'br_3_a', 'cr_a': 'cr_3_a', 'br_c': 'br_3_c', 'cr_c': 'cr_3_c'})
     register_corresp.append({'br_a': 'br_4_a', 'cr_a': 'cr_4_a', 'br_c': 'br_4_c', 'cr_c': 'cr_4_c'})
     register_corresp.append({'br_a': 'br_5_a', 'cr_a': 'cr_5_a', 'br_c': 'br_5_c', 'cr_c': 'cr_5_c'})
-
+    registerd = False
+    note_temp = ''
     for cor in register_corresp:
         if u.isIntAndNotZero(request.POST[cor['br_a']]) or u.isIntAndNotZero(request.POST[cor['cr_a']]):
+            if registerd == True:
+                note_temp = ''
+            else:
+                note_temp = request.POST['note']
             db.Journal.objects.create(
                 date = strdate,
                 group_id = groupid,
@@ -183,8 +190,9 @@ def regist(request):
                 br_amount = u.getEmptyOrValueInt(request.POST[cor['br_a']]),
                 cr_acc_bot_uid = db.AccBot.objects.get(uid=request.POST[cor['cr_c']]),
                 cr_amount = u.getEmptyOrValueInt(request.POST[cor['cr_a']]),
-                note = request.POST['note'],
+                note = note_temp,
             )
+            registerd = True
             log.info('register journal object')
     return redirect("/sdss")
 
@@ -215,7 +223,7 @@ def summary(request):
         'month_list': getMonthList(),
         'year_list': yearList,
         'view_name': 'sdss 2.0 BS PL summary view',
-        'target_year': '2018',
+        'target_year': str(datetime.now().year),
         'message': '',
     }
     return render(request, 'summary.html', context)
@@ -226,7 +234,9 @@ def summary_year(request, year):
     pl = p()
     bslist = bs.getMiddleYearStatement(year)
     pllist = pl.getMiddleYearStatement(year)
+    yearList = ['2018','2019']
     context = {
+        'year_list': yearList,
         'bs_list': bslist,
         'pl_list': pllist,
         'month_list': getMonthList(),
@@ -365,4 +375,3 @@ def getJournalList(qs_journal):
 
 #TODO すでに処理が重そうな気がするので今後パフォーマンスに関する何らかの処置が必要かも
 #TODO 貸借差額=当期損益の計算および表示
-

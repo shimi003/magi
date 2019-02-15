@@ -1,35 +1,45 @@
 {% extends "base.html" %}
 {% block content %}
-  <form method="post" action="/">
-    {% csrf_token %}
-    <select name="year">
-      {% for year in year_list %}
-        <option value="{{ year }}">{{ year }}</option>
-      {% endfor %}
-    </select>
-   <input type="button" value="ok" onclick="moveYear()"/>
-  </form>
-  <table class="main">
-    <tr>
-      <th>勘定科目</th>
-      {% for m in month_list %}
-        <th>{{ m }}</th>
-      {% endfor %}
-    </tr>
-    {% load humanize %}
-    {% for k, v in pl_list.items %}
-      <tr>
-        <td>{{ k }}</td>
-        {% for amount in v %}
-          <td align="right">
-            {% if amount < 0 %}<font color="red">{% endif %}
-              {{ amount|intcomma }}
-            {% if amount < 0 %}</font>{% endif %}
-          </td>
+  <div  class="container-fluid">
+    <form method="post" action="/">
+      {% csrf_token %}
+      <select name="year">
+        {% for year in year_list %}
+          <option value="{{ year }}">{{ year }}</option>
         {% endfor %}
-      <tr>
-    {% endfor %}
-  </table>
+      </select>
+     <input type="button" value="年のPLを表示する" onclick="moveYear()"/>
+     <br />
+     <br />
+    </form>
+  </div>
+  <div  class="container-fluid">
+    <table class="table table-hover table-striped table-bordered">
+      <thead class="thead-light">
+        <tr>
+          <th class="text-center">勘定科目</th>
+          {% for m in month_list %}
+            <th class="text-center">{{ m }}</th>
+          {% endfor %}
+        </tr>
+      </thead>
+      {% load humanize %}
+      <tbody>
+        {% for k, v in pl_list.items %}
+          <tr>
+            <td>{{ k }}</td>
+            {% for amount in v %}
+              <td class="text-right">
+                {% if amount < 0 %}<font color="red">{% endif %}
+                  {{ amount|intcomma }}
+                {% if amount < 0 %}</font>{% endif %}
+              </td>
+            {% endfor %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
 {% endblock %}
 {% block extra_js %}
   <script type="text/javascript">

@@ -1,3 +1,5 @@
+{% extends "base.html" %}
+<!--
 <!DOCTYPE html>
 <html>
   <head lang = 'ja'>
@@ -6,7 +8,8 @@
     <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
     <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
     <script src="js/autocomplete_kana.js"></script>
-
+-->
+{% block extra_js %}
     // TODO divide below script to another js-file.
     <script type='text/javascript'>
       window.onload = function(){
@@ -25,7 +28,7 @@
       $("input[name='br_1_a']").blur(function(){
         if( $(this).val() != ''){
           if( $(this).val().match(/^[0-9]+$/) == null){
-            alart('数字を入力してください');
+            alert('数字を入力してください');
           }
         }
       });
@@ -35,17 +38,17 @@
         if(obj.value != ''){
           if(obj.value.match(/^[0-9,]+$/) ==null){
             //alert('数字のみを入力してください');
-            chknum[obj.name] = false;
+            //chknum[obj.name] = false;
             if(!!obj.style) obj.style.backgroundColor='lightpink';
           }
           else{
-            if(!!obj.style) obj.style.backgroundColor='white';
-            chknum[obj.name] = true;
+            if(!!obj.style) obj.style = .backgroundColor='transparent';
+            //chknum[obj.name] = true;
           }
         }
         else{
-          if(!!obj.style) obj.style.backgroundColor='white';
-          chknum[obj.name] = true;
+          if(!!obj.style) obj.style.backgroundColor='transparent';
+          //chknum[obj.name] = true;
         }
       };
       function chkForm(){
@@ -100,188 +103,67 @@
     	});
     });
     </script>
-  </head>
-  <body>
-    <a href="/sdss/">input</a>
-    <a href="/sdss/summary/">summary</a>
-    <a href="/sdss/bs/">bs</a>
-    <a href="/sdss/pl/">pl</a>
-    <a href="/sdss/journal/">journal</a>
-    <h1>{{ view_name }}</h1>
+{% endblock %}
+
+{% block content %}
+{% csrf_token %}
     <form method="post" name="journal_regist_form" action="regist/">
       {% csrf_token %}
       <!-- <input type="date" name = 'journal_date' id='journal_date' value='{{ today }}' /> -->
-      <lable>日付</label>
-      <input type="date" name = 'journal_date' id='journal_date' value="{{ journal_date }}" />
-      <div class="ui-widget">
-        <table>
-          <tr>
-            <th>借方勘定科目</th>
-            <th>借方金額</th>
-            <th>貸方勘定科目</th>
-            <th>貸方金額</th>
-          </tr>
-          <tr>
-              <td>
-                <select name="br_1_c">
-                  {% for key, valuelist in listgroup.items %}
-                    <optgroup label="{{ key }}">
-                      {% for val in valuelist %}
-                        <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                      {% endfor %}
-                    </optgroup>
-                  {% endfor %}
-                </select>
-              </td>
-              <td>
-                <input type="text" name="br_1_a" onblur="chknum(this)" />
-              </td>
-            <td>
-              <select name="cr_1_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="cr_1_a" onblur="chknum(this)" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select name="br_2_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="br_2_a" onblur="chknum(this)" />
-            </td>
-            <td>
-              <select name="cr_2_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="cr_2_a" onblur="chknum(this)" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select name="br_3_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="br_3_a" onblur="chknum(this)" />
-            </td>
-            <td>
-              <select name="cr_3_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="cr_3_a" onblur="chknum(this)" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select name="br_4_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="br_4_a" onblur="chknum(this)" />
-            </td>
-            <td>
-              <select name="cr_4_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="cr_4_a" onblur="chknum(this)" />
-            </td>
-          </tr>
-          <tr>
-            <td>
-              <select name="br_5_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="br_5_a" onblur="chknum(this)" />
-            </td>
-            <td>
-              <select id="combobox" name="cr_5_c">
-                {% for key, valuelist in listgroup.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <input type="text" name="cr_5_a" onblur="chknum(this)" />
-            </td>
-          </tr>
-        </table>
+      <div class="container-fluid">
+        <lable>日付</label>
+        <input type="date" name = 'journal_date' id='journal_date' value="{{ journal_date }}" />
       </div>
-
+      <br />
+      <br />
+      <div  class="container-fluid">
+        <table class="table table-bordered table-striped">
+          <thead class="thead-light">
+            <tr>
+              <th class="text-center">借方勘定科目</th>
+              <th class="text-center">借方金額</th>
+              <th class="text-center">貸方勘定科目</th>
+              <th class="text-center">貸方金額</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for i in i_list %}
+              <tr>
+                  {% for borc in b_or_c %}
+                  <td class="text-center">
+                    <select name="{{ borc }}_{{ i }}_c">
+                      {% for key, valuelist in listgroup.items %}
+                        <optgroup label="{{ key }}">
+                          {% for val in valuelist %}
+                            <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                          {% endfor %}
+                        </optgroup>
+                      {% endfor %}
+                    </select>
+                  </td>
+                  <td class="text-center">
+                    <input type="text" name="{{ borc }}_{{ i }}_a" onblur="chknum(this)" />
+                  </td>
+                  {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
       <label>コメントとか</label>
-      <input type="text" name="note" cols="100" rows="3"/> <br />
-      <input type="submit" value="登録" name='regist' onclick="return chkForm()"/>
-      <input type="reset" value="キャンセル" name='cancel'/>
-      <br / >
-      <br / >
-      <label id = "error"></label><br />
-      <label id = "status">{{ message }}</label>
+      <input type="text" name="note" cols="300" rows="3"/> <br />
+      <div class="d-flex justify-content-center">
+        <input type="submit" value="登録" name='regist' onclick="return chkForm()" />
+        <input type="reset" value="キャンセル" name='cancel' />
+      </div>
+      {% if error %}
+        <div class="alert alert-danger" role="alert">
+      {% endif %}
+      <label id = "error"></label>
+      {% if error %}
+      </div>
+      {% endif %}
+      {% if message %}
+        <div class="alert alert-success" role="alert"><p>{{ message }}</p></div>
+      {% endif %}
     </form >
-  </body>
-</html>
+{% endblock %}
