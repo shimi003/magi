@@ -211,24 +211,7 @@ def journal(request):
     return render(request, 'journal.html', context)
 
 
-def summary(request):
-    bs = b()
-    pl = p()
-    bslist = bs.getMiddleYearStatement(datetime.now().year)
-    pllist = pl.getMiddleYearStatement(datetime.now().year)
-    yearList = ['2018','2019']
-    context = {
-        'bs_list': bslist,
-        'pl_list': pllist,
-        'month_list': getMonthList(),
-        'year_list': yearList,
-        'view_name': 'sdss 2.0 BS PL summary view',
-        'target_year': str(datetime.now().year),
-        'message': '',
-    }
-    return render(request, 'summary.html', context)
-
-def summary_year(request, year):
+def summary(request, year=0):
     year = u.cleanYear(year)
     bs = b()
     pl = p()
@@ -236,10 +219,10 @@ def summary_year(request, year):
     pllist = pl.getMiddleYearStatement(year)
     yearList = ['2018','2019']
     context = {
-        'year_list': yearList,
         'bs_list': bslist,
         'pl_list': pllist,
         'month_list': getMonthList(),
+        'year_list': yearList,
         'view_name': 'sdss 2.0 BS PL summary view',
         'target_year': str(year),
         'message': '',
@@ -247,25 +230,7 @@ def summary_year(request, year):
     return render(request, 'summary.html', context)
 
 
-def bs(request):
-    # |       |   10    |    11   |    12   |
-    # | ICOCA |   2,100 |   5,900 |   9,200 |
-    # |  現金  |  13,110 |  24,670 |     ... |
-    bs_class = b()
-    bslist = bs_class.getBottomYearStatement(datetime.now().year)
-    yearList = ['2018','2019']
-    context = {
-        'bs_list': list,
-        'year_list': yearList,
-        'bs_mid_list': bslist,
-        'month_list': getMonthList(),
-        'view_name': 'sdss 2.0 BS view',
-        'target_year': str(datetime.now().year),
-        'message': '',
-    }
-    return render(request, 'bs.html', context)
-
-def bs_year(request, year):
+def bs(request, year=0):
     # |       |   10    |    11   |    12   |
     # | ICOCA |   2,100 |   5,900 |   9,200 |
     # |  現金  |  13,110 |  24,670 |     ... |
@@ -275,7 +240,6 @@ def bs_year(request, year):
     yearList = ['2018','2019']
     context = {
         'bs_list': list,
-        'year': year,
         'year_list': yearList,
         'bs_mid_list': bslist,
         'month_list': getMonthList(),
@@ -286,30 +250,14 @@ def bs_year(request, year):
     return render(request, 'bs.html', context)
 
 
-def pl(request):
-    pl = p()
-    pllist = pl.getBottomYearStatement(datetime.now().year)
-    yearList = ['2018','2019']
-    context = {
-        'year_list': yearList,
-        'pl_list': pllist,
-        'month_list': getMonthList(),
-        'view_name': 'sdss 2.0 PL view',
-        'target_year': str(datetime.now().year),
-        'message': '',
-    }
-    return render(request, 'pl.html', context)
-
-
-def pl_year(request, year):
-    pl = p()
+def pl(request, year=0):
     year = u.cleanYear(year)
+    pl = p()
     pllist = pl.getBottomYearStatement(year)
     yearList = ['2018','2019']
     context = {
         'year_list': yearList,
         'pl_list': pllist,
-        'year': year,
         'month_list': getMonthList(),
         'view_name': 'sdss 2.0 PL view',
         'target_year': str(year),

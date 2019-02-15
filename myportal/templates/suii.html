@@ -29,7 +29,7 @@
         labels: {{ label | safe }},
         datasets: [
           {
-            label: "現金",
+            label: {% if acc_name %}"{{ acc_name }}",{% else %}"現金",{% endif %}
             fill: false,
             borderColor: "rgba(0,135,135,10)",
             data: {{ suii_list | safe }},
