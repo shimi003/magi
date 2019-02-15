@@ -12,17 +12,20 @@
 
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <style>.big{font-size: 100%;}</style>
+    <style>.small{font-size: 70%;}</style>
+
     {% block extra_css %}{% endblock %}
   </head>
   <body>
     <br />
     <div  class="container-fluid">
-        <a class="btn btn-default border border-primary" href="/sdss/">Input</a>
-        <a class="btn btn-default border border-primary" href="/sdss/summary/">Summary</a>
-        <a class="btn btn-default border border-primary" href="/sdss/bs/">BS</a>
-        <a class="btn btn-default border border-primary" href="/sdss/pl/">PL</a>
-        <a class="btn btn-default border border-primary" href="/sdss/journal/">Journal</a>
-        <a class="btn btn-default border border-primary" href="/sdss/suii/">Suii</a>
+        <a class="btn btn-default border border-primary big" href="/sdss/">Input</a>
+        <a class="btn btn-default border border-primary big" href="/sdss/summary/">Summary</a>
+        <a class="btn btn-default border border-primary big" href="/sdss/bs/">BS</a>
+        <a class="btn btn-default border border-primary big" href="/sdss/pl/">PL</a>
+        <a class="btn btn-default border border-primary big" href="/sdss/journal/">Journal</a>
+        <a class="btn btn-default border border-primary big" href="/sdss/suii/">Suii</a>
         <br />
         <br />
         <h1>{{ view_name }}</h1>

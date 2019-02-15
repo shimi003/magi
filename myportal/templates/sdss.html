@@ -1,54 +1,34 @@
 {% extends "base.html" %}
-<!--
-<!DOCTYPE html>
-<html>
-  <head lang = 'ja'>
-    <meta charset="utf-8">
-    <title>{{ view_name }}</title>
-    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    <script src="js/autocomplete_kana.js"></script>
--->
 {% block extra_js %}
-    // TODO divide below script to another js-file.
     <script type='text/javascript'>
+    // TODO divide below script to another js-file.
       window.onload = function(){
         // TODO jsよりpythonのが得意そうだからdjangoから渡す
-        var today = new Date();
-        //today.setDate(today.getDate());
-        var yyyy = today.getFullYear();
-        var mm = ("0"+(today.getMonth()+1)).slice(-2);
-        var dd = ("0"+today.getDate()).slice(-2);
-        //console.log(yyyy+'-'+mm+'-'+dd); //デバッグ用
-        document.getElementById("journal_date").value=yyyy+'-'+mm+'-'+dd;
+        setDateInDTP();
       }
     </script>
     <script type='text/javascript'>
-      // judge isNumber but... only br_1_a? is using??
-      $("input[name='br_1_a']").blur(function(){
-        if( $(this).val() != ''){
-          if( $(this).val().match(/^[0-9]+$/) == null){
-            alert('数字を入力してください');
-          }
-        }
-      });
-
+      function setDateInDTP(daydiff=0){
+        var day = new Date();
+        day.setDate(day.getDate() + daydiff);
+        console.log(daydiff);
+        var yyyy = day.getFullYear();
+        var mm = ("0"+(day.getMonth()+1)).slice(-2);
+        var dd = ("0"+day.getDate()).slice(-2);
+        document.getElementById("journal_date").value=yyyy+'-'+mm+'-'+dd;
+      };
       // 金額入力欄の入力チェック（数字以外で背景をピンクにする）
       function chknum(obj){
         if(obj.value != ''){
           if(obj.value.match(/^[0-9,]+$/) ==null){
-            //alert('数字のみを入力してください');
-            //chknum[obj.name] = false;
             if(!!obj.style) obj.style.backgroundColor='lightpink';
           }
           else{
-            if(!!obj.style) obj.style = .backgroundColor='transparent';
-            //chknum[obj.name] = true;
+            if(!!obj.style) obj.style.backgroundColor='white';
           }
         }
         else{
-          if(!!obj.style) obj.style.backgroundColor='transparent';
-          //chknum[obj.name] = true;
+          if(!!obj.style) obj.style.backgroundColor='white';
         }
       };
       function chkForm(){
@@ -75,6 +55,7 @@
         }
         else{
           //登録されない理由を返す
+          $('.error').addClass('alert alert-danger')
           if (br_sum == 0){
             $("#error").text('登録に失敗しました（金額未入力）')
           }
@@ -107,15 +88,17 @@
 
 {% block content %}
 {% csrf_token %}
-    <form method="post" name="journal_regist_form" action="regist/">
       {% csrf_token %}
       <!-- <input type="date" name = 'journal_date' id='journal_date' value='{{ today }}' /> -->
       <div class="container-fluid">
         <lable>日付</label>
-        <input type="date" name = 'journal_date' id='journal_date' value="{{ journal_date }}" />
+        <input type="date" name='journal_date' id='journal_date' value="{{ journal_date }}" />
+        <a class="btn btn-default border border-info small" onclick="setDateInDTP(-2)">一昨日</a>
+        <a class="btn btn-default border border-info small" onclick="setDateInDTP(-1)">昨日</a>
+        <a class="btn btn-default border border-info small" onclick="setDateInDTP()">今日</a>
       </div>
       <br />
-      <br />
+      <form method="post" name="journal_regist_form" action="regist/">
       <div  class="container-fluid">
         <table class="table table-bordered table-striped">
           <thead class="thead-light">
@@ -157,11 +140,11 @@
       </div>
       {% if error %}
         <div class="alert alert-danger" role="alert">
+      {% else %}
+        <div class="error">
       {% endif %}
       <label id = "error"></label>
-      {% if error %}
       </div>
-      {% endif %}
       {% if message %}
         <div class="alert alert-success" role="alert"><p>{{ message }}</p></div>
       {% endif %}
