@@ -41,7 +41,7 @@ def index(request):
     context = {
         'i_list': ['1','2','3','4','5'],
         'b_or_c': ['br', 'cr'],
-        'journal_date_val': datetime.now().strftime('%Y-%m-%d'),
+        'journal_date': datetime.now().strftime('%Y-%m-%d'),
         'accbot_dic': accbot_dic,
         'account_list': accbot_list,
         'listgroup':    accbot_listgroup,

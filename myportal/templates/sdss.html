@@ -15,7 +15,7 @@
         var yyyy = day.getFullYear();
         var mm = ("0"+(day.getMonth()+1)).slice(-2);
         var dd = ("0"+day.getDate()).slice(-2);
-        document.getElementById("journal_date_id").value=yyyy+'-'+mm+'-'+dd;
+        document.getElementById("journal_date").value=yyyy+'-'+mm+'-'+dd;
       };
       // 金額入力欄の入力チェック（数字以外で背景をピンクにする）
       function chknum(obj){
@@ -91,7 +91,7 @@
       <form method="post" name="journal_regist_form" action="regist/">
       <div class="container-fluid">
         <lable>日付</label>
-        <input type="date" name='journal_date_name' id='journal_date_id' value="{{ journal_date_val }}" />
+        <input type="date" name='journal_date' id='journal_date' value="{{ journal_date }}" />
         <a class="btn btn-default border border-info small" onclick="setDateInDTP(-2)">一昨日</a>
         <a class="btn btn-default border border-info small" onclick="setDateInDTP(-1)">昨日</a>
         <a class="btn btn-default border border-info small" onclick="setDateInDTP()">今日</a>
