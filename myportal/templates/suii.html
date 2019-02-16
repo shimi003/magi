@@ -1,24 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 {% csrf_token %}
-  {% comment %}
-     <form method="post" action="/">
-    <select name="year">
-    {% for year in year_list %}
-      <option value="{{ year }}">{{ year }}</option>
+<form method="post" action="/">
+  <select name="ym">
+    {% for ym in ym_list %} {# ym_list = ['2018/10', '2018/11', ...] #}
+      <option value="{{ ym }}">{{ ym }}</option>
     {% endfor %}
-    </select>
-    <input type="button" value="ok" onclick="moveYear()"/>
-  </form>
-  {% endcomment %}
-  <div>
-    <canvas id="myChart"></canvas>
-  </div>
+  </select>
+  <select name="account">
+    {% for key, valuelist in listgroup.items %}
+      <optgroup label="{{ key }}">
+        {% for val in valuelist %}
+          <option value='{{ val.uid }}'>
+            {{ val.label }}/{{ val.value }}
+          </option>
+        {% endfor %}
+      </optgroup>
+    {% endfor %}
+  </select>
+  <input type="button" value="ok" onclick="move()"/>
+</form>
+<div>
+  <canvas id="myChart"></canvas>
+</div>
 {% endblock %}
+
 {% block extra_js %}
   <script type="text/javascript">
-    function moveYear(){
-      window.location.href=$("select[name='year']").val();
+    function move(){
+      window.location.href="{% url 'suii' %}"
+        + $("select[name='ym']").val()
+        + '/' + $("select[name='account']").val();
     };
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
@@ -27,15 +39,13 @@
       type: "line",
       data: {
         labels: {{ label | safe }},
-        datasets: [
-          {
-            label: {% if acc_name %}"{{ acc_name }}",{% else %}"現金",{% endif %}
-            fill: false,
-            borderColor: "rgba(0,135,135,10)",
-            data: {{ suii_list | safe }},
-          }
-        ],
+        datasets: [{
+          label: {% if acc_name %}"{{ acc_name }}",{% else %}"現金",{% endif %}
+          fill: false,
+          borderColor: "rgba(0,135,135,10)",
+          data: {{ suii_list }},
+        }],
       },
     });
   </script>
-  {% endblock %}
+{% endblock %}

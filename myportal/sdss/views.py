@@ -7,6 +7,8 @@ import sdss.models as db
 import json as simplejson
 from django.db import models as django_models
 from django.db.models import Sum
+from django.db.models import Count
+from django.db.models.functions import Left
 
 from datetime import datetime
 import logging as log
@@ -39,7 +41,7 @@ def index(request):
     context = {
         'i_list': ['1','2','3','4','5'],
         'b_or_c': ['br', 'cr'],
-        'journal_date': datetime.now().strftime('%Y-%m-%d'),
+        'journal_date_val': datetime.now().strftime('%Y-%m-%d'),
         'accbot_dic': accbot_dic,
         'account_list': accbot_list,
         'listgroup':    accbot_listgroup,
@@ -97,8 +99,11 @@ def suii(request, year=0, month=0, accID=GENKIN_ACC_BOT_UID):
     month = u.cleanMonth(month)
     suiilist = getAccountSuii(year, month, accID)
     labels = list(range(1,32))
+    accbot_listgroup = getAccountListByGroup()
     print('are---')
     context = {
+        'listgroup': accbot_listgroup,
+        'ym_list': getGatherYearMonth(),
         'suii_list': suiilist,
         'acc_name': db.AccBot.objects.get(uid=accID).name,
         'label': labels,
@@ -109,21 +114,32 @@ def suii(request, year=0, month=0, accID=GENKIN_ACC_BOT_UID):
     return render(request, 'suii.html', context)
 
 
+def getGatherYearMonth():
+    qs = db.Journal.objects.annotate(ll=Left('date',6)).values('ll').annotate(Count('ll')).order_by('-ll')
+    ym_list = []
+    for q in qs:
+        if len(q['ll']) >= 6:
+            ym_list.append(q['ll'][0:4] + '/' + q['ll'][4:6])
+    return ym_list
+
+
 '''
 TODO can use in both BS and PL.
 create an account valiables only "BS", except PL.
 '''
 def getAccountSuii(year, month, accID):
 
-    # calc initial value
-    year = u.cleanYear(year)
-    month = u.cleanMonth(month)
     strDate = u.createCurrentYearMonthString(year, month)
-    init_qs = db.Journal.objects.filter(date__lt=strDate)
-    init_br = u.getEmptyOrValueInt(init_qs.filter(br_acc_bot_uid=accID).aggregate(Sum('br_amount'))['br_amount__sum'])
-    init_cr = u.getEmptyOrValueInt(init_qs.filter(cr_acc_bot_uid=accID).aggregate(Sum('cr_amount'))['cr_amount__sum'])
     br_direction = db.AccBot.objects.get(uid=accID).acc_mid_uid.acc_top_uid.is_br
-    total = u.diffBrCr(init_br, init_cr, br_direction)
+
+    # BSのみ前月末残高を計算
+    if db.AccBot.objects.get(uid=accID).acc_mid_uid.acc_top_uid.uid >= 4:
+        total = 0
+    else:
+        init_qs = db.Journal.objects.filter(date__lt=strDate)
+        init_br = u.getEmptyOrValueInt(init_qs.filter(br_acc_bot_uid=accID).aggregate(Sum('br_amount'))['br_amount__sum'])
+        init_cr = u.getEmptyOrValueInt(init_qs.filter(cr_acc_bot_uid=accID).aggregate(Sum('cr_amount'))['cr_amount__sum'])
+        total = u.diffBrCr(init_br, init_cr, br_direction)
     print('total=' + str(total))
     # summing day by day ...
     dic = []

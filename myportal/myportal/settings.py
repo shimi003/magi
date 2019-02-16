@@ -131,8 +131,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'
-# STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
-# STATIC_ROOT = '/var/www/{}/static'.format(PROJECT_NAME)
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
+STATIC_ROOT = '/var/www/{}/static'.format(PROJECT_NAME)
 
 LOGGING = {
     'version': 1,   # これを設定しないと怒られる
@@ -169,17 +169,18 @@ LOGGING = {
         },
     },
 }
-if DEBUG:
-    def show_toolbar(request):
-        return True
 
-    INSTALLED_APPS += (
-        'debug_toolbar',
-    )
-    MIDDLEWARE += (
-        'debug_toolbar.middleware.DebugToolbarMiddleware',
-    )
-    DEBUG_TOOLBAR_CONFIG = {
-        'SHOW_TOOLBAR_CALLBACK': show_toolbar,
-    }
-
+#if DEBUG:
+#    def show_toolbar(request):
+#        return True
+#
+#    INSTALLED_APPS += (
+#        'debug_toolbar',
+#    )
+#    MIDDLEWARE += (
+#        'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    )
+#
+#    DEBUG_TOOLBAR_CONFIG = {
+#        'SHOW_TOOLBAR_CALLBACK': show_toolbar,
+#    }
