@@ -88,7 +88,7 @@
 
 {% block content %}
       <!-- <input type="date" name = 'journal_date_name' id='journal_date' value='{{ today }}' /> -->
-      <form method="post" name="journal_regist_form" action="regist/">
+      <form method="post" name="journal_regist_form" action="{% url 'regist' %}">
       <div class="container-fluid">
         <lable>日付</label>
         <input type="date" name='journal_date' id='journal_date' value="{{ journal_date }}" />

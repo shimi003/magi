@@ -3,6 +3,7 @@ import warnings
 
 # Create your views here.
 from django.http import HttpResponse
+from django.urls import reverse
 import sdss.models as db
 import json as simplejson
 from django.db import models as django_models
@@ -207,7 +208,8 @@ def regist(request):
             )
             registerd = True
             log.info('register journal object')
-    return redirect("/sdss")
+    # TODO ハードコーディングなのでショートカットにするとか
+    return redirect('/magi/sdss')
 
 
 
