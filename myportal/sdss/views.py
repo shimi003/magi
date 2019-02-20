@@ -86,10 +86,7 @@ def getCostBudgetList():
         })
         if amount != '':
             total += int(amount)
-    d['費用予算(月間)合計'] = []
-    d['費用予算(月間)合計'].append({
-        'amount': total,
-    })
+    d['費用予算(月間)合計'] = {'amount': total,}
     return d
 
 

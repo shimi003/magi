@@ -17,4 +17,5 @@ def index(request):
         '音楽鑑賞',
         '買い物（趣味のもの）',
     ]
-    return HttpResponse("あなたが次にすべきなのは 「" + l[random.randrange(0, len(l), 1)] + "」 です！")
+    return HttpResponse("暇なんだったら 「" + l[random.randrange(0, len(l), 1)] + "」 でもしてみたら？")
+    #return HttpResponse("あなたが次にすべきなのは 「" + l[random.randrange(0, len(l), 1)] + "」 です！")

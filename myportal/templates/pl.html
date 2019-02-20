@@ -14,7 +14,7 @@
     </form>
   </div>
   <div  class="container-fluid">
-    <table class="table table-hover table-striped table-bordered">
+    <table class="table table-hover table-striped table-bordered colla">
       <thead class="thead-light">
         <tr>
           <th class="text-center">勘定科目</th>
@@ -26,15 +26,21 @@
       {% load humanize %}
       <tbody>
         {% for k, v in pl_list.items %}
-          <tr>
-            <td>{{ k }}</td>
-            {% for amount in v %}
-              <td class="text-right">
-                {% if amount < 0 %}<font color="red">{% endif %}
-                  {{ amount|intcomma }}
-                {% if amount < 0 %}</font>{% endif %}
-              </td>
-            {% endfor %}
+          {% if k == '費用計' %}
+            <tr class="top-single-border">
+          {% elif k == '損益' %}
+            <tr class="top-double-border">
+          {% else %}
+            <tr>
+          {% endif %}
+          <td class="top-single-border">{{ k }}</td>
+          {% for amount in v %}
+            <td class="text-right top-double-border">
+              {% if amount < 0 %}<font color="red">{% endif %}
+                {{ amount|intcomma }}
+              {% if amount < 0 %}</font>{% endif %}
+            </td>
+          {% endfor %}
           </tr>
         {% endfor %}
       </tbody>
@@ -47,4 +53,18 @@
       window.location.href=$("select[name='year']").val();
     };
   </script>
+{% endblock %}
+
+{% block extra_css %}
+  <style>
+    th .top-single-border{
+      border-top: solid;
+    }
+    th .top-double-border{
+      border-top: double;
+    }
+    table .colla{
+      border-collapse: collapse;
+    }
+  </style>
 {% endblock %}
