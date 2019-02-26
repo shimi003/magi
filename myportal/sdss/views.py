@@ -17,19 +17,8 @@ from dateutil.relativedelta import relativedelta
 
 from sdss.BS import BSClass as b
 from sdss.PL import PLClass as p
+from sdss.Detail import DetailClass as d
 import sdss.Utility as u
-
-
-AccType = {
-    'Asset': 1,
-    'Liabilitie': 2,
-    'NetAsset': 3,
-    'Cost': 4,
-    'Plofit': 5,
-    'CashFlowFromOperation': 6,
-    'CashFlowFromInvestment': 7,
-    'CashFlowFromFinancial': 8,
-}
 
 GENKIN_ACC_BOT_UID = 6
 
@@ -212,7 +201,6 @@ def regist(request):
     return redirect('/magi/sdss')
 
 
-
 def journal(request):
     # | uid | date | group_id | br_acc_bot_name | br_amount | ... |
     # TODO extract year, month ...etc
@@ -252,7 +240,7 @@ def bs(request, year=0):
     year = u.cleanYear(year)
     bs_class = b()
     bslist = bs_class.getBottomYearStatement(year)
-    yearList = ['2018','2019']
+    yearList = ['2018', '2019',]
     context = {
         'bs_list': list,
         'year_list': yearList,
@@ -279,6 +267,25 @@ def pl(request, year=0):
         'message': '',
     }
     return render(request, 'pl.html', context)
+
+
+def detail(request, mid_class_uid=1, year=0):
+    year = u.cleanYear(year)
+    d_class = d()
+    selectable_year_list = ['2018', '2019',]
+    month_list = range(1,13) # =['1','2', .. '12']
+    mid_class_list = d_class.getTopMidAccList()
+    acc_amount_list = d_class.getClassificationDetail(mid_class_uid, year)
+    mid_class_name = d_class.getMidClassName(mid_class_uid)
+    context = {
+        'year': year,
+        'month_list': month_list,
+        'selectable_year_list': selectable_year_list,
+        'mid_class_name': mid_class_name,
+        'mid_class_list': mid_class_list,
+        'acc_amount_list': acc_amount_list,
+    }
+    return render(request, 'detail.html', context)
 
 
 def cs(request):

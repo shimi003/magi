@@ -7,6 +7,22 @@ ReportType = {
     'CS': 3,
 }
 
+AccType = {
+    'Asset': 1,
+    'Liabilitie': 2,
+    'NetAsset': 3,
+    'Cost': 4,
+    'Plofit': 5,
+    'CashFlowFromOperation': 6,
+    'CashFlowFromInvestment': 7,
+    'CashFlowFromFinancial': 8,
+}
+
+
+def getSelectableYearList():
+    pass
+
+
 def cleanYear(year):
     year = getEmptyOrValueInt(year)
     try:
@@ -95,5 +111,3 @@ def isIntAndNotZero(str):
     except Exception as e:
         log.info('an Exception in isIntAndNotZero: ' + str)
         return False
-
-
