@@ -220,7 +220,7 @@ def summary(request, year=0):
     pl = p()
     bslist = bs.getMiddleYearStatement(year)
     pllist = pl.getMiddleYearStatement(year)
-    yearList = ['2018','2019']
+    yearList = ['2019', '2018',]
     context = {
         'bs_list': bslist,
         'pl_list': pllist,
@@ -240,7 +240,7 @@ def bs(request, year=0):
     year = u.cleanYear(year)
     bs_class = b()
     bslist = bs_class.getBottomYearStatement(year)
-    yearList = ['2018', '2019',]
+    yearList = ['2019', '2018',]
     context = {
         'bs_list': list,
         'year_list': yearList,
@@ -257,7 +257,7 @@ def pl(request, year=0):
     year = u.cleanYear(year)
     pl = p()
     pllist = pl.getBottomYearStatement(year)
-    yearList = ['2018','2019']
+    yearList = ['2019', '2018',]
     context = {
         'year_list': yearList,
         'pl_list': pllist,
@@ -272,7 +272,7 @@ def pl(request, year=0):
 def detail(request, mid_class_uid=1, year=0):
     year = u.cleanYear(year)
     d_class = d()
-    selectable_year_list = ['2018', '2019',]
+    selectable_year_list = ['2019', '2018',]
     month_list = range(1,13) # =['1','2', .. '12']
     mid_class_list = d_class.getTopMidAccList()
     acc_amount_list = d_class.getClassificationDetail(mid_class_uid, year)

@@ -20,7 +20,7 @@
         <tr>
           <th class="text-center">勘定科目</th>
           {% for m in month_list %}
-            <th class="text-center">{{ m }}</th>
+            <th class="text-center" width="120">{{ m }}</th>
           {% endfor %}
         </tr>
       </thead>
@@ -29,7 +29,7 @@
             <tr>
               <td class="text-center">{{ k }}</td>
               {% for amount in v %}
-                <td class="text-right">{{ amount|intcomma }}</td>
+                <td class="text-right" width="120">{{ amount|intcomma }}</td>
               {% endfor %}
             </tr>
         {% endfor %}

@@ -20,6 +20,13 @@ AccType = {
 
 
 def getSelectableYearList():
+    ret = []
+    ret.append('2019')
+    ret.append('2018')
+    return ret
+
+
+def getSelectableYearList():
     pass
 
 
