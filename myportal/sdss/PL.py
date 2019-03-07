@@ -35,6 +35,9 @@ class PLClass(FSClass):
                 log.info('acc.uid = ' + str(acc.uid) + ' brCrDirection = ' + str(brCrDirection))
                 d = []
 
+                # 12ヶ月いずれも出現しない勘定科目は登録しないのでその管理フラグ
+                wasNotChangeInYear = True
+
                 for i in range(12):
                     #各月の集計
                     currentYearMonth = u.createCurrentYearMonthString(year, i + 1)
@@ -52,10 +55,17 @@ class PLClass(FSClass):
                             profit[i]  += current
                             proloss[i] += current
 
-                        d.append(current if current != 0 else '')
+                        if current == 0:
+                            d.append('')
+                        else:
+                            wasNotChangeInYear = False
+                            d.append(current)
+                            #d.append(current if current != 0 else '')
                     else:
                         d.append('')
-                dic[acc.name] = d
+                # 全部空欄なら追加しない
+                if wasNotChangeInYear == False:
+                    dic[acc.name] = d
             dic['費用計'] = loss
             dic['利益計'] = profit
             dic['損益'] = proloss
@@ -117,5 +127,3 @@ class PLClass(FSClass):
         except Exception as e:
             print('PLClass.getMiddleYearStatement 何らかの例外が発生しました year=' + str(year))
             return {}
-
-        

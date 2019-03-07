@@ -35,6 +35,9 @@ class BSClass(FSClass):
 
                 d = []
 
+                # 12ヶ月いずれも出現しない勘定科目は登録しないのでその管理フラグ
+                wasNotChangeInYear = True
+
                 for i in range(12):
                     #各月の集計
                     currentYearMonth = u.createCurrentYearMonthString(year, i + 1)
@@ -45,16 +48,27 @@ class BSClass(FSClass):
                         curr_br = qs.filter(br_acc_bot_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
                         curr_cr = qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
                         current += u.diffBrCr(curr_br, curr_cr, brCrDirection)
-                        d.append(current if current != 0 else '')
+                        #d.append(current if current != 0 else '')
+
+                        if current == 0:
+                            d.append('')
+                        else:
+                            wasNotChangeInYear = False
+                            d.append(current)
+
                     else:
                         d.append('')
-                dic[acc.name] = d
+
+                # 全部空欄なら追加しない
+                if wasNotChangeInYear == False:
+                    dic[acc.name] = d
+
             return dic
 
         except Exception as e:
             logger.error('exception in BSClass.getBottomYearStatement, year=' + str(year))
             return {}
-        
+
 
 
     def getMiddleYearStatement(self, year):
@@ -95,4 +109,3 @@ class BSClass(FSClass):
         except Exception as e:
             logger.error('exception in BSClass.getMiddleYearStatement, year=' + str(year))
             return {}
-
