@@ -29,7 +29,11 @@
         <tr>
           <td class="text-center">{{ k }}</td>
           {% for amount in v %}
-            <td class="text-right" width="120">{{ amount|intcomma }}</td>
+            <td class="text-right" width="110">
+              {% if amount < 0 %}<font color="red">{% endif %}
+              {{ amount|intcomma }}
+              {% if amount < 0 %}</font>{% endif %}
+            </td>
           {% endfor %}
         </tr>
       {% endfor %}
@@ -52,7 +56,7 @@
         <tr>
           <td class="text-center">{{ k }}</td>
           {% for amount in v %}
-            <td class="text-right" width="120">
+            <td class="text-right" width="110">
               {% if amount < 0 %}<font color="red">{% endif %}
               {{ amount|intcomma }}
               {% if amount < 0 %}</font>{% endif %}
