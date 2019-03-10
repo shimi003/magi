@@ -131,7 +131,7 @@ def getAccountSuii(year, month, accID):
     curr_br_qs = qs.filter(br_acc_bot_uid=accID)
     curr_cr_qs = qs.filter(cr_acc_bot_uid=accID)
 
-    # 1 ~ 31まで借方と貸方の差分を取得する。2月31日とかも処理するけど文字列型なので問題なし
+    # 1日 ~ 31日まで借方と貸方の差分を取得する。2月31日とかも処理するけど文字列型なので問題なし
     for i in range(1,32):
         today_br_sum = u.getEmptyOrValueInt(curr_br_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('br_amount'))['br_amount__sum'])
         today_cr_sum = u.getEmptyOrValueInt(curr_cr_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('cr_amount'))['cr_amount__sum'])

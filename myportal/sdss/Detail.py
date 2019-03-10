@@ -40,6 +40,8 @@ class DetailClass():
             # TODO 上位でもクリーニングしてるが・・・
             year = u.cleanYear(year)
 
+            total = [0,0,0,0,0,0,0,0,0,0,0,0]
+
             dic = {}
             accListQs = db.AccBot.objects.filter(acc_mid_uid = classificaiton).order_by('sort_order')
             acc_top = 0
@@ -81,9 +83,13 @@ class DetailClass():
                         else:
                             current = u.diffBrCr(curr_br, curr_cr, brCrDirection)
                         d.append(current if current != 0 else '')
+                        total[i] += current if current != 0 else 0
+
                     else:
                         d.append('')
+                        total[i] = ''
                 dic[acc.name] = d
+            dic['合計'] = total
             return dic
 
         except Exception as e:
