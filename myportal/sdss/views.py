@@ -21,6 +21,7 @@ from sdss.Detail import DetailClass as d
 import sdss.Utility as u
 
 GENKIN_ACC_BOT_UID = 6
+DUMMY_ACC_BOT_UID = 101
 
 #
 def index(request):
@@ -29,13 +30,13 @@ def index(request):
     accbot_list = getAccountList(accbot_qs)
     accbot_listgroup = getAccountListByGroup()
     context = {
-        'i_list': ['1','2','3','4','5'],
-        'b_or_c': ['br', 'cr'],
+        'i_list':       ['1','2','3','4','5'],
+        'b_or_c':       ['br', 'cr'],
         'journal_date': datetime.now().strftime('%Y-%m-%d'),
-        'accbot_dic': accbot_dic,
+        'accbot_dic':   accbot_dic,
         'account_list': accbot_list,
         'listgroup':    accbot_listgroup,
-        'view_name': 'sdss 2.0 journal input',
+        'view_name':    'sdss 2.0 journal input',
         'message': '',
     }
     return render(request, 'sdss.html', context)
@@ -80,23 +81,42 @@ def getCostBudgetList():
     return d
 
 
-def suii(request, year=0, month=0, accID=GENKIN_ACC_BOT_UID):
+def suii(request, year=0, month=0,
+         accID1=GENKIN_ACC_BOT_UID,
+         accID2=0,
+         accID3=0,
+ ):
+
+    message = ''
+    # ダミーが来たらとりあえず現金を表示しとく
+    if int(accID1) == DUMMY_ACC_BOT_UID:
+        accID1 = GENKIN_ACC_BOT_UID
+        message += 'accID1にダミーIDが来たため現金を表示します。\r\n'
 
     year = u.cleanYear(year)
     month = u.cleanMonth(month)
-    suiilist = getAccountSuii(year, month, accID)
+    suiilist1 = getAccountSuii(year, month, accID1)
+    suiilist2 = getAccountSuii(year, month, accID2)
+    suiilist3 = getAccountSuii(year, month, accID3)
+    suiilist = {db.AccBot.objects.get(uid=accID1).name: suiilist1,}
+    if int(accID2) != 0 and int(accID2) != DUMMY_ACC_BOT_UID:
+        suiilist[db.AccBot.objects.get(uid=accID2).name] = getAccountSuii(year, month, accID2)
+    if int(accID3) != 0 and int(accID3) != DUMMY_ACC_BOT_UID:
+        suiilist[db.AccBot.objects.get(uid=accID3).name] = getAccountSuii(year, month, accID3)
     labels = list(range(1,32))
     accbot_listgroup = getAccountListByGroup()
+    one_two_three = [1,2,3]
     print('are---')
     context = {
-        'listgroup': accbot_listgroup,
-        'ym_list': getGatherYearMonth(),
-        'suii_list': suiilist,
-        'acc_name': db.AccBot.objects.get(uid=accID).name,
-        'label': labels,
+        'title_jp':     str(year) + '年' + str(month) + '月の各勘定合計金額変動/累積状況',
+        'o_t_t':        one_two_three,
+        'listgroup':    accbot_listgroup,
+        'ym_list':      getGatherYearMonth(),
+        'suii_list':    suiilist,
+        'label':        labels,
         'view_name': 'sdss 2.0 Account Transition view',
         'target_year_month': str(year) + '/' + str(month),
-        'message': '',
+        'message': message,
     }
     return render(request, 'suii.html', context)
 
@@ -110,7 +130,11 @@ def getGatherYearMonth():
     return ym_list
 
 
+# TODO dicじゃなくてlistでは・・・・。
 def getAccountSuii(year, month, accID):
+
+    if accID == 0:
+        return []
 
     strDate = u.createCurrentYearMonthString(year, month)
     br_direction = db.AccBot.objects.get(uid=accID).acc_mid_uid.acc_top_uid.is_br
@@ -131,15 +155,23 @@ def getAccountSuii(year, month, accID):
     curr_br_qs = qs.filter(br_acc_bot_uid=accID)
     curr_cr_qs = qs.filter(cr_acc_bot_uid=accID)
 
+    # TODO 2019年現在にyearが２０２０だった場合の考慮はしてないが不要？
+    isSyoribiYM = datetime.now().year == year and datetime.now().month == month
+
     # 1日 ~ 31日まで借方と貸方の差分を取得する。2月31日とかも処理するけど文字列型なので問題なし
     for i in range(1,32):
-        today_br_sum = u.getEmptyOrValueInt(curr_br_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('br_amount'))['br_amount__sum'])
-        today_cr_sum = u.getEmptyOrValueInt(curr_cr_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('cr_amount'))['cr_amount__sum'])
-        print(str(i) + ': add to ' + str(u.diffBrCr(today_br_sum, today_cr_sum, br_direction)))
-        total += u.diffBrCr(today_br_sum, today_cr_sum, br_direction)
-        dic.append(total)
-    print(str(dic))
-
+        # 処理当日以降のは登録しない
+        if isSyoribiYM and i > datetime.now().day:
+            dic.append(0)
+        else:
+            today_br_sum = u.getEmptyOrValueInt(curr_br_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('br_amount'))['br_amount__sum'])
+            today_cr_sum = u.getEmptyOrValueInt(curr_cr_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('cr_amount'))['cr_amount__sum'])
+            print(str(i) + ': add to ' + str(u.diffBrCr(today_br_sum, today_cr_sum, br_direction)))
+            total += u.diffBrCr(today_br_sum, today_cr_sum, br_direction)
+            dic.append(total)
+        #else:
+        #    dic.append(0)
+    #print(str(dic))
     return dic
 
 

@@ -20,5 +20,7 @@ urlpatterns = [
     path(r'summary/', views.summary, name='summary'),
     path(r'summary/<year>', views.summary, name='summary_year'),
     path(r'suii/', views.suii, name='suii'),
-    path(r'suii/<year>/<month>/<accID>', views.suii, name='suii'),
+    path(r'suii/<year>/<month>/<accID1>/', views.suii, name='suii'),
+    path(r'suii/<year>/<month>/<accID1>/<accID2>/', views.suii, name='suii'),
+    path(r'suii/<year>/<month>/<accID1>/<accID2>/<accID3>/', views.suii, name='suii'),
 ]

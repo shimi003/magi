@@ -1,26 +1,36 @@
 {% extends "base.html" %}
 {% block content %}
 {% csrf_token %}
-<form method="post" action="/">
-  <select name="ym">
-    {% for ym in ym_list %} {# ym_list = ['2018/10', '2018/11', ...] #}
-      <option value="{{ ym }}">{{ ym }}</option>
-    {% endfor %}
-  </select>
-  <select name="account">
-    {% for key, valuelist in listgroup.items %}
-      <optgroup label="{{ key }}">
-        {% for val in valuelist %}
-          <option value='{{ val.uid }}'>
-            {{ val.label }}/{{ val.value }}
-          </option>
+<div class="container-fluid">
+  <form method="post" action="/">
+    <label>年月選択</label>
+    <select name="ym">
+      {% for ym in ym_list %} {# ym_list = ['2018/10', '2018/11', ...] #}
+        <option value="{{ ym }}">{{ ym }}</option>
+      {% endfor %}
+    </select>
+    <input type="button" value="表示更新" onclick="move()"/>
+    <br />
+    {% for n in o_t_t %}
+      <label>勘定科目{{ n }}</label>
+      <select name="account{{ n }}">
+        {% for key, valuelist in listgroup.items %}
+          <optgroup label="{{ key }}">
+            {% for val in valuelist %}
+              <option value='{{ val.uid }}'>
+                {{ val.label }}/{{ val.value }}
+              </option>
+            {% endfor %}
+          </optgroup>
         {% endfor %}
-      </optgroup>
+      </select>
+      <br />
     {% endfor %}
-  </select>
-  <input type="button" value="ok" onclick="move()"/>
-</form>
-<div>
+  </form>
+</div>
+<br />
+<div class="container-fluid">
+  <h2 style="text-align: center">{{ title_jp }}</h2>
   <canvas id="myChart"></canvas>
 </div>
 {% endblock %}
@@ -30,7 +40,9 @@
     function move(){
       window.location.href="{% url 'suii' %}"
         + $("select[name='ym']").val()
-        + '/' + $("select[name='account']").val();
+        + '/' + $("select[name='account1']").val()
+        + '/' + $("select[name='account2']").val()
+        + '/' + $("select[name='account3']").val()
     };
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.7.1/Chart.min.js"></script>
@@ -39,13 +51,48 @@
       type: "line",
       data: {
         labels: {{ label | safe }},
-        datasets: [{
-          label: {% if acc_name %}"{{ acc_name }}",{% else %}"現金",{% endif %}
-          fill: false,
-          borderColor: "rgba(0,135,135,10)",
-          data: {{ suii_list }},
-        }],
+        datasets: [
+          {% for k, v in suii_list.items %}
+            {
+              //label: {% if k %}"{{ k }}",{% else %}"現金",{% endif %}
+              label: "{{ k }}",
+              fill: false,
+              borderColor:
+                {% if   forloop.counter == 1 %} "rgba(0,135,135,10)",
+                {% elif forloop.counter == 2 %} "rgba(0,171,255,127)",
+                {% else %}                      "rgba(299,0,118,10)",
+                {% endif %}
+              data: {{ v }},
+            },
+          {% endfor %}
+        ],
       },
+      options: {
+//        title: {
+//          display: false,
+//          text: '{{ title_jp }}',
+//        },
+        scales: {
+          xAxes:[{
+            scaleLabel:{
+              display: true,
+              labelString: "日",
+            },
+          }],
+          yAxes: [{
+            scaleLabel:{
+              display: true,
+              labelString: "金額[円]",
+            },
+            ticks: {
+              min: 0,
+              callback: function(label, index, labels){
+                return '￥' + label.toString().replace(/\B(?=(\d{3})+(?!\d))/g,',');
+              }
+            }
+          }]
+        }
+      }
     });
   </script>
 {% endblock %}

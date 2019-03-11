@@ -39,6 +39,11 @@
       </div>
     </div>
     {% block content %}{% endblock %}
+    {% if message %}
+      <div  class="container-fluid">
+        <p>{{ message }}</p>
+      </div>
+    {% endif %}
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
