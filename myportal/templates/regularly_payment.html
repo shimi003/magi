@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load humanize %}
+  {% csrf_token %}
+  <div  class="container-fluid">
+    <h3>{{ title_jp }}</h3>
+    <a href="add">+ 登録する</a>
+    <table class="table table-striped table-hover table-bordered table-condensed">
+      <thead class="thead-light">
+        <tr>
+          <th class="text-center">uid</th>
+          <th class="text-center">自動記帳</th>
+          <th class="text-center">勘定科目名</th>
+          <th class="text-center">引き落とし先</th>
+          <th class="text-center">支払金額（月額）</th>
+          <th class="text-center">支払日</th>
+          <th class="text-center">特記事項</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for values in regularly_payment_list %}
+            <tr>
+              <td class="text-right">{{ values.id }}</td>
+              <td class="text-right">
+                <input type="checkbox" disabled='disabled' {% if values.is_regist_automaticaly %} checked="checked" {% endif %} >
+              </td>
+              <td>{{ values.acc_name }}</td>
+              <td>{{ values.acc_name_from }}</td>
+              <td class="text-right">{{ values.amount_per_month|intcomma }}</td>
+              <td>{{ values.payment_day }}</td>
+              <td>{{ values.note }}</td>
+            </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endblock %}

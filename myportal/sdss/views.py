@@ -33,8 +33,8 @@ def index(request):
         'i_list':       ['1','2','3','4','5'],
         'b_or_c':       ['br', 'cr'],
         'journal_date': datetime.now().strftime('%Y-%m-%d'),
-        'accbot_dic':   accbot_dic,
-        'account_list': accbot_list,
+        'accbot_dic':   accbot_dic,  # iru...?
+        'account_list': accbot_list, # iru...?
         'listgroup':    accbot_listgroup,
         'view_name':    'sdss 2.0 journal input',
         'message': '',
@@ -80,6 +80,56 @@ def getCostBudgetList():
     d['費用予算(月間)合計'] = {'amount': total,}
     return d
 
+
+def regularly_view(request):
+    # output account_name(str), payment_day(str), amount(int), note(str)
+    # toriaezu view only...
+
+    context = {
+        'title_jp': '毎月の支払項目とその金額の一覧です。',
+        'regularly_payment_list': getRegularlyPaymentList(),
+    }
+    return render(request, 'regularly_payment.html', context)
+
+
+def getRegularlyPaymentList():
+    qs = db.RegularlyPayment.objects.all()
+    d = []
+    for entry in qs:
+        d.append({
+            'id': entry.uid,
+            'is_regist_automaticaly': entry.is_regist_automaticaly,
+            'acc_name': entry.acc_bot_uid.name,
+            'acc_name_from': entry.acc_bot_uid_from.name,
+            'amount_per_month': entry.amount_per_month,
+            'payment_day': entry.payment_day,
+            'note': entry.note,
+        })
+    return d
+
+
+def regularly_add(request):
+    context = {
+        'title_jp': '毎月の支払項目を登録します。',
+        'acc_list': getAccountListByGroup(),
+    }
+    return render(request, 'regularly_payment_add.html', context)
+
+
+def regularly_regist(request):
+
+    ret_value = ''
+    message=''
+    db.RegularlyPayment.objects.create(
+        is_regist_automaticaly='is_auto' in request.POST,
+        acc_bot_uid=db.AccBot.objects.get(uid=request.POST['acc_bot_uid']),
+        acc_bot_uid_from=db.AccBot.objects.get(uid=request.POST['acc_bot_uid_from']),
+        amount_per_month=request.POST['amount_per_month'],
+        payment_day=request.POST['payment_day'],
+        note=request.POST['note'],
+    )
+
+    return redirect('/magi/sdss/regularly-payment/add/?message=' + message)
 
 def suii(request, year=0, month=0,
          accID1=GENKIN_ACC_BOT_UID,

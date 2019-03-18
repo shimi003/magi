@@ -19,6 +19,7 @@ class AccBot(models.Model):
         managed = False
         db_table = 'acc_bot'
 
+
 class AccMid(models.Model):
     uid = models.AutoField(primary_key=True)
     acc_top_uid = models.ForeignKey('AccTop', models.DO_NOTHING, db_column='acc_top_uid')
@@ -59,6 +60,7 @@ class Budget(models.Model):
 class Journal(models.Model):
     uid = models.AutoField(primary_key=True)
     date = models.CharField(max_length=10)
+    was_regist_by_system = models.BooleanField(null=True)
     group_id = models.CharField(max_length=20)
     br_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='br_acc_bot_uid', related_name='journal_acc_br_id')
     br_amount = models.IntegerField(blank=True, null=True)
@@ -69,3 +71,17 @@ class Journal(models.Model):
     class Meta:
         managed = False
         db_table = 'journal'
+
+
+class RegularlyPayment(models.Model):
+    uid = models.AutoField(primary_key=True)
+    is_regist_automaticaly = models.BooleanField()
+    acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='acc_bot_uid')
+    acc_bot_uid_from = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid_from', related_name='acc_bot_uid_from')
+    amount_per_month = models.IntegerField()
+    payment_day = models.CharField(max_length=20, null=True)
+    note = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'regularly'
