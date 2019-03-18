@@ -6,46 +6,50 @@
     <form method="post" action="{% url 'regularly_regist' %}"> <!-- urlはurls.pyのnameに効くらしい -->
       {% csrf_token %}
       <table class="table table-striped table-hover table-bordered table-condensed">
-        <thead class="thead-light">
-          <tr>
-            <th class="text-center">自動記帳</th>
-            <th class="text-center">勘定科目名</th>
-            <th class="text-center">引き落とし先</th>
-            <th class="text-center">支払金額（月額）</th>
-            <th class="text-center">支払日</th>
-            <th class="text-center">特記事項</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td align="center"><input type="checkbox" name="is_auto" /></td>
-            <td>
-              <select name="acc_bot_uid">
-                {% for key, valuelist in acc_list.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td>
-              <select name="acc_bot_uid_from">
-                {% for key, valuelist in acc_list.items %}
-                  <optgroup label="{{ key }}">
-                    {% for val in valuelist %}
-                      <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
-                    {% endfor %}
-                  </optgroup>
-                {% endfor %}
-              </select>
-            </td>
-            <td><input type="text" name="payment_day" /></td>
-            <td><input type="text" name="amount_per_month" /></td>
-            <td><input type="text" name="note" /></td>
-          </tr>
-        </tbody>
+        <tr>
+          <th class="text-center">自動記帳</th>
+          <td><input type="checkbox" name="is_auto" /></td>
+        </tr>
+        <tr>
+          <th class="text-center">勘定科目名</th>
+          <td>
+            <select name="acc_bot_uid">
+              {% for key, valuelist in acc_list.items %}
+                <optgroup label="{{ key }}">
+                  {% for val in valuelist %}
+                    <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                  {% endfor %}
+                </optgroup>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th class="text-center">相手勘定</th>
+          <td>
+            <select name="acc_bot_uid_from">
+              {% for key, valuelist in acc_list.items %}
+                <optgroup label="{{ key }}">
+                  {% for val in valuelist %}
+                    <option value='{{ val.uid }}'>{{ val.label }}/{{ val.value }}</option>
+                  {% endfor %}
+                </optgroup>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        <tr>
+          <th class="text-center">支払金額（月額）</th>
+          <td><input type="text" name="amount_per_month" /></td>
+        </tr>
+        <tr>
+          <th class="text-center">支払日</th>
+          <td><input type="text" name="payment_day" /></td>
+        </tr>
+        <tr>
+          <th class="text-center">特記事項</th>
+          <td><input type="text" name="note" /></td>
+        </tr>
       </table>
       <input type="submit" value="登録" name='regist' onclick="return chkForm()" />
       <input type="reset" value="キャンセル" name='cancel' />
