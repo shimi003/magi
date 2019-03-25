@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load humanize %}
+  {% csrf_token %}
+  <div  class="container-fluid">
+    <h3>{{ title_jp }}</h3>
+    <br />
+    <br />
+    {# not impliment!! #}<!-- <a href="add">+ 登録する</a> -->
+    {% for top_name, mid_items in acc_list.items %}
+      <h4>{{ forloop.counter }}. {{ top_name }}の部</h4>
+      {% for mid_name, acc_items in mid_items.items %}
+        <h5>{{ forloop.counter }}. {{ mid_name }}</h5>
+        <table class="table table-striped table-hover table-bordered table-condensed">
+          <thead class="thead-light">
+            <tr>
+              <th class="text-center">uid</th>
+              <th class="text-center">勘定科目名</th>
+              <th class="text-center">特記事項</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for acc in acc_items %}
+              <tr>
+                <td width = "20">{{ acc.uid }}</td>
+                <td width = "110">{{ acc.name }}</td>
+                <td width = "500">
+                  {% if acc.note != 'None' %}{{ acc.note }}{% endif %}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <br />
+      {% endfor %}
+    {% endfor %}
+  </div>
+{% endblock %}

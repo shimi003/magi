@@ -26,4 +26,5 @@ urlpatterns = [
     path(r'regularly-payment/', views.regularly_view, name='regularly_view'),
     path(r'regularly-payment/add/', views.regularly_add, name='regularly_add'),
     path(r'regularly-payment/regist/', views.regularly_regist, name='regularly_regist'),
+    path(r'acc_list/', views.acc_list, name='acc_list'),
 ]

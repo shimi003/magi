@@ -92,6 +92,35 @@ def regularly_view(request):
     return render(request, 'regularly_payment.html', context)
 
 
+def acc_list(request):
+    context = {
+        'title_jp': '登録済み勘定科目の一覧です。',
+        'acc_list': getAccViewList(),
+    }
+    return render(request, 'acc_list.html', context)
+
+
+def getAccViewList():
+    qs_top = db.AccTop.objects.all()
+    t = {}
+
+    for top_query in qs_top:
+        m = {}
+        qs_mid = db.AccMid.objects.filter(acc_top_uid = top_query.uid)
+        for mid_query in qs_mid:
+            b = []
+            qs_bot = db.AccBot.objects.filter(acc_mid_uid = mid_query.uid)
+            for bot_entry in qs_bot:
+                b.append({
+                    'uid': bot_entry.uid,
+                    'name': bot_entry.name,
+                    'note': bot_entry.note,
+                })
+            m[mid_query.name] = b
+        t[top_query.name] = m
+    return t
+
+
 def getRegularlyPaymentList():
     qs = db.RegularlyPayment.objects.all()
     d = []
