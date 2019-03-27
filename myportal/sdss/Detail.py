@@ -24,7 +24,7 @@ class DetailClass():
                 m = {}
                 for accmid in qsMidAccList:
                     m[accmid.uid] = accmid.name
-                tm[acctop.name] = m
+                tm[acctop.name + 'の部'] = m
         return tm
 
 
