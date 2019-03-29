@@ -10,7 +10,7 @@
     {% for top_name, mid_items in acc_list.items %}
       <h4>{{ forloop.counter }}. {{ top_name }}の部</h4>
       {% for mid_name, acc_items in mid_items.items %}
-        <h5>{{ forloop.counter }}. {{ mid_name }}</h5>
+        <h5>{{ forloop.counter }}) {{ mid_name }}</h5>
         <table class="table table-striped table-hover table-bordered table-condensed">
           <thead class="thead-light">
             <tr>
