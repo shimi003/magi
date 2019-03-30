@@ -1,70 +1,31 @@
-<!DOCTYPE html>
-<!-- TODO BSとPLの処理およびテンプレートがほぼ共通なので統一する -->
-<html>
-  <head lang = 'ja'>
-    <meta charset="utf-8">
-    <title>{{ view_name }}</title>
-    <script src="https://code.jquery.com/jquery-3.0.0.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.12.0/jquery-ui.js"></script>
-    <script src="js/autocomplete_kana.js"></script>
-    <script type="text/javascript">
-    // テーブルをストライプ表示に
-      $(function() {
-          $('tr:nth-child(odd)').addClass('odd');
-      });
-    </script>
-    <style type="text/css">
-      <!--
-      table{
-      	    margin: 15px auto 10px auto;
-	          border-collapse: collapse;
-    	}
-    	th{
-    	    padding:5px;
-    	    background:#266;
-    	    border:1px solid #777;
-    	    color: #fff;
-    	}
-    	td{
-    	    border:solid 1px #777;
-    	    background:#eee;
-    	    padding:5px;
-    	}
-    	table tr.odd td {
-    	    background: #ccc;
-    	}
-      -->
-    </style>
-  </head>
-  <body>
-    <a href="/sdss/">input</a>
-    <a href="/sdss/summary/">summary</a>
-    <a href="/sdss/bs/">bs</a>
-    <a href="/sdss/pl/">pl</a>
-    <a href="/sdss/journal/">journal</a>
-    <h1>{{ view_name }}</h1>
-    <table>
-      <tr>
-        <th>勘定科目</th>
-        <th>使用開始日</th>
-        <th>使用終了日(予定日)</th>
-        <th>予算金額(月額)</th>
-        <th>特記事項</th>
-      </tr>
-      {% for key, valuelist in budget_list.items %}
+{% extends "base.html" %}
+{% block content %}
+  {% load humanize %}
+  <div class="container-fluid">
+    <table class="table table-striped table-hover table-bordered table-condensed">
+      <thead class="thead-light">
         <tr>
-          <td>{{ key }}</td>
+          <th>uid</th>
+          <th>勘定科目名</th>
+          <th>予算金額(月額)</th>
+          <th>特記事項</th>
         </tr>
-        {% for val in valuelist %}
+      </thead>
+      <tbody>
+        {% for key, valuelist in budget_list.items %}
           <tr>
-            <td>{{ val.name }}</td>
-            <td>{{ val.for }}</td>
-            <td>{{ val.from }}</td>
-            <td>{{ val.amount }}</td>
-            <td>{{ val.note }}</td>
+            <td colspan = '4'>{{ key }}</td>
           </tr>
+          {% for val in valuelist %}
+            <tr>
+              <td>{{ val.uid }}</td>
+              <td>{{ val.name }}</td>
+              <td>{{ val.amount }}</td>
+              <td>{{ val.note }}</td>
+            </tr>
+          {% endfor %}
         {% endfor %}
-      {% endfor %}
+      </tbody>
     </table>
-  </body>
-</html>
+  </div>
+{% endblock %}
