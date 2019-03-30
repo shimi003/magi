@@ -15,6 +15,9 @@ class AccBot(models.Model):
     name_ac = models.CharField(max_length=45, blank=True, null=True)
     note = models.CharField(max_length=200, blank=True, null=True)
 
+    def __str__(self):
+        return self.name
+
     class Meta:
         managed = False
         db_table = 'acc_bot'

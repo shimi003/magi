@@ -46,7 +46,29 @@ class JournalAdmin(admin.ModelAdmin):
 
 
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ('uid', 'acc_bot_uid', 'from_field', 'for_field', 'amount_per_month', 'note')
+    list_display = ('uid_alias', 'acc_bot_name', 'from_field_alias', 'for_field_alias', 'amount_per_month_alias', 'note')
+
+    def uid_alias(self, obj):
+        return obj.uid
+    uid_alias.short_description = 'UID'
+
+    def from_field_alias(self, obj):
+        return obj.from_field
+    from_field_alias.short_description = '有効期間（開始）'
+
+    def for_field_alias(self, obj):
+        return obj.for_field
+    for_field_alias.short_description = '有効期間（終了）'
+
+    def acc_bot_name(self, obj):
+        return obj.acc_bot_uid.name
+    acc_bot_name.short_description = '勘定科目名'
+
+    def amount_per_month_alias(self, obj):
+        return '{:,}'.format(obj.amount_per_month) + '円'
+    amount_per_month_alias.short_description = '月間予算'
+
+
 
 admin.site.register(AccBot, AccBotAdmin)
 admin.site.register(AccMid, AccMidAdmin)
