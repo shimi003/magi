@@ -4,6 +4,7 @@ import logging as log
 from django.db.models import Sum
 import sdss.Utility as u
 from datetime import datetime
+import sdss.Budget as bd
 
 # TODO Summary common program both BS and PL to FS.
 
@@ -18,7 +19,8 @@ class PLClass(FSClass):
             year = u.cleanYear(year)
 
             print('daibu temae...')
-            dic = {}
+            #dic = {}
+            ret = []
             accListQs = db.AccBot.objects.filter(
                 acc_mid_uid__acc_top_uid__union_bs1_pl2_cs3=u.ReportType['PL']).order_by('sort_order')
 
@@ -29,6 +31,22 @@ class PLClass(FSClass):
             current = 0
 
             print('kokomade ok!')
+
+            '''
+            20190401 仕様変更
+            変更前
+            {
+                '支払家賃':  [38000, 38000, ... 38000]
+            }
+
+            ->
+            変更後
+            [
+                'acc_name': '支払家賃',
+                'budget': 50000,
+                'list': [38000, 38000, 38000, ... 38000]
+            ]
+            '''
 
             for acc in accListQs:
                 brCrDirection = acc.acc_mid_uid.acc_top_uid.is_br
@@ -65,18 +83,27 @@ class PLClass(FSClass):
                         d.append('')
                 # 全部空欄なら追加しない
                 if wasNotChangeInYear == False:
-                    dic[acc.name] = d
-            dic['費用計'] = loss
-            dic['利益計'] = profit
-            dic['損益'] = proloss
-            return dic
+                    ret.append({
+                        'acc_name': acc.name,
+                        'budget': bd.getBudget(acc.uid),
+                        'list': d,
+                    })
+                    #dic[acc.name] = d
+
+            ret.append({'acc_name': '費用計', 'budget': '', 'list': loss,})
+            ret.append({'acc_name': '利益計', 'budget': '', 'list': profit,})
+            ret.append({'acc_name': '損益',   'budget': '', 'list': proloss,})
+            #dic['費用計'] = loss
+            #dic['利益計'] = profit
+            #dic['損益'] = proloss
+            return ret
 
         except ValueError as value_e:
             print('PLClass.getBottomYearStatement 何らかの例外が発生しました errorType:' + type(value_e) + 'year=' + str(year))
-            return {}
+            return []
         except TypeError as type_e:
             print('PLClass.getBottomYearStatement 何らかの例外が発生しました errorType:' + type(type_e) + 'year=' + str(year))
-            return {}
+            return []
 
 
     # 2番めに細かい（例： 現金預金、生活費など）レベルの財務諸表を作成する

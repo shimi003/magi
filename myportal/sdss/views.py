@@ -18,6 +18,7 @@ from dateutil.relativedelta import relativedelta
 from sdss.BS import BSClass as b
 from sdss.PL import PLClass as p
 from sdss.Detail import DetailClass as d
+import sdss.Budget as bd
 import sdss.Utility as u
 
 GENKIN_ACC_BOT_UID = 6
@@ -50,34 +51,23 @@ def budget(request):
 
 
 def getCostBudgetList():
-    qs_bot = db.AccBot.objects.filter(acc_mid_uid__acc_top_uid=AccType['Cost']).order_by('sort_order')
+    qs_bot = db.AccBot.objects.filter(acc_mid_uid__acc_top_uid=u.AccType['Cost']).order_by('sort_order')
     d = {}
     total = 0
     for entry in qs_bot:
         if not entry.acc_mid_uid.name in d:
             d[entry.acc_mid_uid.name] = []
 
-        for_field = ''
-        from_field = ''
-        amount = ''
-        note = ''
-
-        if len(db.Budget.objects.filter(acc_bot_uid=entry.uid)) > 0:
-            for_field = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].for_field
-            from_field = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].from_field
-            amount = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].amount_per_month
-            note = db.Budget.objects.order_by('-from').filter(acc_bot_uid=entry.uid)[0].note
-
+        budget = int(bd.getBudget(entry.uid))
+        total += budget
         d[entry.acc_mid_uid.name].append({
-            'name':   entry.name,
-            'for':    for_field,
-            'from':   from_field,
-            'amount': amount,
-            'note':   note,
+            'uid': entry.uid,
+            'name': entry.name,
+            'amount': budget,
+            'note': entry.note if entry.note is not None else '' ,
         })
-        if amount != '':
-            total += int(amount)
-    d['費用予算(月間)合計'] = {'amount': total,}
+
+    d['費用予算(月間)合計'] = {'uid': '', 'name': '', 'amount': total, 'note': ''}
     return d
 
 

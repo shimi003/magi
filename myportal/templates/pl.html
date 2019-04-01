@@ -25,20 +25,26 @@
       </thead>
       {% load humanize %}
       <tbody>
-        {% for k, v in pl_list.items %}
-          {% if k == '費用計' %}
+        {% for items in pl_list %}
+          {% if items.acc_name == '費用計' %}
             <tr class="top-single-border">
-          {% elif k == '損益' %}
+          {% elif items.acc_name == '損益' %}
             <tr class="top-double-border">
           {% else %}
             <tr>
           {% endif %}
-          <td class="top-single-border text-center">{{ k }}</td>
-          {% for amount in v %}
+          <td class="top-single-border text-center">{{ items.acc_name }}</td>
+          {% for amount in items.list %}
             <td class="text-right top-double-border" width="110">
-              {% if amount < 0 %}<font color="red">{% endif %}
-                {{ amount|intcomma }}
-              {% if amount < 0 %}</font>{% endif %}
+              {% if amount < 0 %}
+                <font color="red">
+              {% elif items.budget > 0 and amount > items.budget %}
+                <font color="orange">
+              {% endif %}
+              {{ amount|intcomma }}
+              {% if amount < 0 %}</font>
+              {% elif items.budget > 0 and amount > items.budget %}</font>
+              {% endif %}
             </td>
           {% endfor %}
           </tr>
