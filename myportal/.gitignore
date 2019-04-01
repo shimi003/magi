@@ -1,5 +1,4 @@
 /apt-install-list
-/*.log
 /*.origin
 /*.json
 /*.sqlite3

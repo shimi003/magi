@@ -11,6 +11,7 @@ class AccBot(models.Model):
     uid = models.AutoField(primary_key=True)
     acc_mid_uid = models.ForeignKey('AccMid', models.DO_NOTHING, db_column='acc_mid_uid')
     sort_order = models.IntegerField(blank=True, null=True)
+    acc_cs_uid = models.ForeignKey('AccTop', models.DO_NOTHING, db_column='acc_cs_uid')
     name = models.CharField(max_length=45)
     name_ac = models.CharField(max_length=45, blank=True, null=True)
     note = models.CharField(max_length=200, blank=True, null=True)
@@ -19,7 +20,7 @@ class AccBot(models.Model):
         return self.name
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'acc_bot'
 
 
@@ -42,6 +43,7 @@ class AccTop(models.Model):
     uid = models.AutoField(primary_key=True)
     name = models.CharField(max_length=45, blank=True, null=True)
     union_bs1_pl2_cs3 = models.IntegerField(blank=True, null=True)
+    sort_order = models.IntegerField(blank=True, null=True)
     is_br = models.IntegerField(blank=True, null=True)
     note = models.CharField(max_length=200, blank=True, null=True)
 
@@ -49,7 +51,7 @@ class AccTop(models.Model):
         return self.name
 
     class Meta:
-        managed = False
+        managed = True
         db_table = 'acc_top'
 
 
