@@ -1,0 +1,6 @@
+*.json
+*.sqlite3
+*.back
+*.dump
+__init__.py
+/__pycache__/*
