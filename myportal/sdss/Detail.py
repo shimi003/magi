@@ -4,6 +4,8 @@ import logging
 from django.db.models import Sum
 import sdss.Utility as u
 from datetime import datetime
+import sdss.Budget as bd
+
 
 logger = logging.getLogger(__name__)
 
@@ -12,6 +14,8 @@ class DetailClass():
 
     def __init__(self):
         pass
+
+
 
 
     def getTopMidAccList(self):
@@ -35,6 +39,7 @@ class DetailClass():
         except:
             return ''
 
+
     def getClassificationDetail(self, classificaiton, year):
         try:
             # TODO 上位でもクリーニングしてるが・・・
@@ -42,7 +47,23 @@ class DetailClass():
 
             total = [0,0,0,0,0,0,0,0,0,0,0,0]
 
-            dic = {}
+            '''
+            20190401 仕様変更
+            変更前
+            {
+                '支払家賃':  [38000, 38000, ... 38000]
+            }
+
+            ->
+            変更後
+            [
+                'acc_name': '支払家賃',
+                'budget': 50000,
+                'list': [38000, 38000, 38000, ... 38000]
+            ]
+            '''
+
+            ret = []
             accListQs = db.AccBot.objects.filter(acc_mid_uid = classificaiton).order_by('sort_order')
             acc_top = 0
             brCrDirection = 0
@@ -88,15 +109,21 @@ class DetailClass():
                     else:
                         d.append('')
                         total[i] = ''
-                dic[acc.name] = d
-            dic['合計'] = total
-            return dic
+                ret.append({
+                    'acc_name': acc.name,
+                    'budget': bd.getBudget(acc.uid),
+                    'list': d,
+                })
+                #dic[acc.name] = d
+            ret.append({'acc_name': '合計', 'budget': '', 'list': total,})
+            #dic['合計'] = total
+            return ret
 
         except Exception as e:
             logger.error('exception in DetailClass.getClassificationDetail,'
-             + ' classification=' + classification +
+             + ' classification=' + classificaiton +
              + ' year=' + str(year))
-            return {}
+            return []
 
 
     #def getClassificationList(classification = u.):

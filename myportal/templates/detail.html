@@ -27,7 +27,13 @@
     </form>
   </div>
 
-  <div  class="container-fluid">
+{#{% for i in acc_amount_list %}#}
+{#  {% for l in i.list %}#}
+{#    <p>{{ l }}</p>#}
+{#  {% endfor %}#}
+{#{% endfor %}#}
+
+  <div class="container-fluid">
     <h3>{{ year }}年の{{ mid_class_name }}科目詳細</h3>
     <table class="table table-striped table-hover table-bordered table-condensed">
       <thead class="thead-light">
@@ -38,12 +44,21 @@
           {% endfor %}
         </tr>
       </thead>
+      {% load humanize %}
       <tbody>
-        {% for acc_name, amount_list in acc_amount_list.items %}
+        {% for items in acc_amount_list %}
             <tr>
-              <td class="text-center">{{ acc_name }}</td>
-              {% for amount in amount_list %}
-                <td class="text-right" width="110">{{ amount|intcomma }}</td>
+              <td class="text-center">{{ items.acc_name }}</td>
+              {% for amount in items.list %}
+                <td class="text-right" width="110">
+                {% if items.budget > 0 and amount > items.budget %}
+                  <font color="orange">
+                {% endif %}
+                {{ amount|intcomma }}
+                {% if items.budget > 0 and amount > items.budget %}
+                  </font>
+                {% endif %}
+                </td>
               {% endfor %}
             </tr>
         {% endfor %}
