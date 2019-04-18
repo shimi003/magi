@@ -1,0 +1,55 @@
+<th class="text-center">{% extends "base.html" %}
+{% block content %}
+  {% load humanize %}
+  {% csrf_token %}
+  <div  class="container-fluid">
+    <a href="addform">+ 登録する</a>
+    <h3>{{ title_jp }}</h3>
+    <form method="post" name="fixed_asset_regist_form" action="{% url 'fixed_asset_regist' %}">
+      <table class="table table-striped table-hover table-bordered table-condensed">
+        <thead class="thead-light">
+          <tr>
+            <th class="text-center">連番</th>
+            <th class="text-center">勘定科目名</th>
+            <th class="text-center">固定資産番号</th>
+            <th class="text-center">固定資産名</th>
+            <th class="text-center">取得日</th>
+            <th class="text-center">取得原価</th>
+            <th class="text-center">現在簿価</th>
+            <th class="text-center">償却方法</th>
+            <th class="text-center">償却期間（月）</th>
+            <th class="text-center">経過月数</th>
+            <th class="text-center">月間償却費</th>
+            <th class="text-center">既償却額</th>
+            <th class="text-center">売却価額</th>
+            <th class="text-center">使用中？</th>
+            <th class="text-center">特記事項</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for val in fixed_asset_list %}
+            <tr>
+              <td>{{ val.uid }}</td>
+              <td>{{ val.acc_name }}</td>
+              <td>{{ val.asset_no }}</td>
+              <td>{{ val.asset_name }}</td>
+              <td>{{ val.get_date }}</td>
+              <td>{{ val.acquisition_cost }}</td>
+              <td>{{ val.carrying_value }}</td>
+              <td>{{ val.amortization_way }}</td>
+              <td>{{ val.amortization_term_in_month }}</td>
+              <td>{{ val.passed_months }}</td>
+              <td>{{ val.amortization_cost_per_month }}</td>
+              <td>{{ val.amortizated_total_cost }}</td>
+              <td>{{ val.sales_income }}</td>
+              <td class="text-right">
+                <input type="checkbox" disabled='disabled' {% if val.is_using %} checked="checked" {% endif %} >
+              </td>
+              <td>{{ val.note }}</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </form>
+  </div>
+{% endblock %}

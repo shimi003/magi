@@ -1,0 +1,48 @@
+<th class="text-center">{% extends "base.html" %}
+{% block content %}
+  {% load humanize %}
+  <div  class="container-fluid">
+    <h3>{{ title_jp }}</h3>
+    <form method="post" name="fixed_asset_regist_form" action="{% url 'fixed_asset_regist' %}">
+      {% csrf_token %}
+      <table class="table table-striped table-hover table-bordered table-condensed">
+        <thead class="thead-light">
+          <tr>
+            <th class="text-center">勘定科目名</th>
+            <th class="text-center">固定資産番号</th>
+            <th class="text-center">固定資産名</th>
+            <th class="text-center">取得日</th>
+            <th class="text-center">取得原価</th>
+            <th class="text-center">償却方法</th>
+            <th class="text-center">償却期間（月）</th>
+            <th class="text-center">使用中？</th>
+            <th class="text-center">特記事項</th>
+          </tr>
+        </thead>
+        <tbody>
+            <tr>
+              <td>
+                <select name="fixed_asset_account_uid">
+                  {% for val in acc_list %}
+                    <option value="{{ val.uid }}">{{ val.label }}/{{ val.value }}</option>
+                  {% endfor %}
+                </select>
+              </td>
+              <td><input type="text" name="asset_no"/></td>
+              <td><input type="text" name="asset_name"/></td>
+              <td>
+                <input type="date" name='get_date' id='get_date' value="{{ today }}" />
+              </td>
+              <td><input type="text" name="get_cost"/></td>
+              <td><input type="text" name="amortization_way" value="定額法"/></td>
+              <td><input type="text" name="amortization_term_in_month" value="36"/></td>
+              <td><input type="checkbox" name="is_using"/></td>
+              <td><input type="text" name="note"/></td>
+            </tr>
+        </tbody>
+      </table>
+      <input type="submit" value="登録する" />
+      <input type="reset" value="リセット" />
+    </form>
+  </div>
+{% endblock %}
