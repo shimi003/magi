@@ -71,6 +71,121 @@ def getCostBudgetList():
     return d
 
 
+def fixed_asset(request):
+    context = {
+        'title_jp': '固定資産一覧表示画面',
+        'fixed_asset_list': getFixedAssetList(),
+    }
+    return render(request, 'fixed_asset.html', context)
+
+
+def fixed_asset_addform(request):
+    fixed_asset_acc_qs = db.AccBot.objects.filter(acc_mid_uid=3)
+    fixed_asset_account_list = getAccountList(fixed_asset_acc_qs)
+
+    context = {
+        'today': datetime.now().strftime('%Y-%m-%d'),
+        'acc_list': fixed_asset_account_list,
+        'title_jp': '固定資産登録画面',
+    }
+    return render(request, 'fixed_asset_add.html', context)
+
+
+def fixed_asset_regist(request):
+    message=''
+    get_date        = request.POST['get_date']
+    total           = int(request.POST['get_cost'])
+    terms           = int(request.POST['amortization_term_in_month'])
+    monthly_cost    = int(getCostPerMonth(total, terms))
+    current_value   = int(getCurrentValue(total, monthly_cost, get_date))
+    passed_month    = getPassedMonths(get_date)
+    using           = True if 'is_using' in request.POST else False
+
+    db.FixedAsset.objects.create(
+        acc_bot_uid=db.AccBot.objects.get(uid=request.POST['fixed_asset_account_uid']),
+        asset_no=request.POST['asset_no'],
+        asset_name=request.POST['asset_name'],
+        get_date=request.POST['get_date'].replace('-',''),
+        acquisition_cost=total,
+        carrying_value=current_value,
+        amortization_way=request.POST['amortization_way'],
+        amortization_term_in_month=terms,
+        passed_months=passed_month,
+        amortization_cost_per_month=monthly_cost,
+        amortizated_total_cost=total-current_value,
+        sales_income=0,
+        is_using=using,
+        note=request.POST['note'],
+    )
+
+    return redirect('/magi/sdss/fixed_asset/addform/?message=' + message)
+
+
+def getCostPerMonth(total, terms):
+    if int(terms) == 0:
+        return 0
+    return int(total) / int(terms)
+
+
+def getPassedMonths(dt_date):
+    #ymd = str_date.split('/')
+    #if len(ymd) < 3: return 0
+    #past_date = datetime(int(ymd[0]),int(ymd[1]),int(ymd[2]))
+    if isinstance(dt_date, datetime):
+        now_date=datetime.now()
+        passed_years=now_date.year-dt_date.year
+        passed_months=now_date.month-dt_date.month
+        return passed_years*12+passed_months
+    else:
+        return 0
+
+
+def getCurrentValue(str_total_cost, str_monthly_cost, str_get_date):
+
+    total_cost = int(str_total_cost)
+    monthly_cost = int(str_monthly_cost)
+    get_date=getDateTimeFromStr(str_get_date)
+    if get_date is not None:
+        return total_cost - monthly_cost * getPassedMonths(get_date)
+    else:
+        return 0
+
+
+def getDateTimeFromStr(str_date):
+    # TODO スクリーニング不十分
+    if str_date is not None:
+        ymd = str_date.split('-')
+        if len(ymd) < 3:
+            return None
+        return datetime(int(ymd[0]),int(ymd[1]),int(ymd[2]))
+    else:
+        return None
+
+
+def getFixedAssetList():
+    qs_fixed_asset_list = db.FixedAsset.objects.all()
+    d=[]
+    for entry in qs_fixed_asset_list:
+        d.append({
+            'uid': entry.uid,
+            'acc_name': entry.acc_bot_uid.name,
+            'asset_no': entry.asset_no,
+            'asset_name': entry.asset_name,
+            'get_date': entry.get_date,
+            'acquisition_cost': entry.acquisition_cost,
+            'carrying_value': entry.carrying_value,
+            'amortization_way': entry.amortization_way,
+            'amortization_term_in_month': entry.amortization_term_in_month,
+            'passed_months': entry.passed_months,
+            'amortization_cost_per_month': entry.amortization_cost_per_month,
+            'amortizated_total_cost': entry.amortizated_total_cost,
+            'sales_income': entry.sales_income,
+            'is_using': entry.is_using,
+            'note': entry.note,
+        })
+    return d
+
+
 def regularly_view(request):
     # output account_name(str), payment_day(str), amount(int), note(str)
     # toriaezu view only...
