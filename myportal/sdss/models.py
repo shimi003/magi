@@ -87,7 +87,7 @@ class Journal(models.Model):
 class RegularlyPayment(models.Model):
     uid = models.AutoField(primary_key=True)
     is_regist_automaticaly = models.BooleanField()
-    acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='acc_bot_uid')
+    acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='rp_acc_bot_uid')
     acc_bot_uid_from = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid_from', related_name='acc_bot_uid_from')
     amount_per_month = models.IntegerField()
     payment_day = models.CharField(max_length=20, null=True)
@@ -100,7 +100,7 @@ class RegularlyPayment(models.Model):
 
 class FixedAsset(models.Model):
     uid = models.AutoField(primary_key=True)
-    acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='acc_bot_uid')
+    acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='fa_acc_bot_uid')
     asset_no = models.CharField(max_length=20, null=True, default='shixxxx')
     asset_name = models.CharField(max_length=45)
     get_date = models.CharField(max_length=10)

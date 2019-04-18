@@ -21,6 +21,7 @@ def getBudget(i_acc_bot_uid):
 
 def isTermInNow(strFrom, strFor):
     strNow = datetime.now().strftime('%Y%m%d')
+    # Nothing from
     if strFrom is None or strFrom == '':
         return False
     else:

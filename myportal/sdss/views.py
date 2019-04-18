@@ -71,6 +71,38 @@ def getCostBudgetList():
     return d
 
 
+def fixed_asset(request):
+    context = {
+        'title_jp': '固定資産一覧表示画面',
+        'fixed_asset_list': getFixedAssetList(),
+    }
+    return render(request, 'fixed_asset.html', context)
+
+
+def getFixedAssetList():
+    qs_fixed_asset_list = db.FixedAsset.objects.all()
+    d=[]
+    for entry in qs_fixed_asset_list:
+        d.append({
+            'uid': entry.uid,
+            'acc_name': entry.acc_bot_uid.name,
+            'asset_no': entry.asset_no,
+            'asset_name': entry.asset_name,
+            'get_date': entry.get_date,
+            'acquisition_cost': entry.acquisition_cost,
+            'carrying_value': entry.carrying_value,
+            'amortization_way': entry.amortization_way,
+            'amortization_term_in_month': entry.amortization_term_in_month,
+            'passed_months': entry.passed_months,
+            'amortization_cost_per_month': entry.amortization_cost_per_month,
+            'amortizated_total_cost': entry.amortizated_total_cost,
+            'sales_income': entry.sales_income,
+            'is_using': entry.is_using,
+            'note': entry.note,
+        })
+    return d
+
+
 def regularly_view(request):
     # output account_name(str), payment_day(str), amount(int), note(str)
     # toriaezu view only...
