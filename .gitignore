@@ -2,7 +2,7 @@
 /myportal/myportal/__pycache__/*
 /myportal/sdss/__pycache__/*
 /myportal/oracle/__pycache__/*
-/.venv/*
+/.venv/
 /__pycache__/*
 /data/*
 /*.json
