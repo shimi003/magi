@@ -133,7 +133,7 @@ class AccountGroup(models.Model):
 
 class AccountGroupList(models.Model):
     uid = models.AutoField(primary_key=True)
-    account_group_uid = models.CharField(max_length=45)
+    account_group_uid = models.ForeignKey(AccountGroup, models.DO_NOTHING, db_column='account_group_uid', related_name='account_group_uid')
     acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
     note = models.CharField(max_length=200, blank=True, null=True)
 
