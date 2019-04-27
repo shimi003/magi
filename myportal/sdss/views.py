@@ -71,6 +71,12 @@ def getCostBudgetList():
     return d
 
 
+#TODO 以下および関連メソッドの実装
+#def account_group
+#def account_group_add
+#def account_group_list
+#def account_group_list_add
+
 def fixed_asset(request):
     context = {
         'title_jp': '固定資産一覧表示画面',
