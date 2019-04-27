@@ -118,3 +118,25 @@ class FixedAsset(models.Model):
     class Meta:
         managed = True
         db_table = 'fixed_asset'
+
+
+class AccountGroup(models.Model):
+    uid = models.AutoField(primary_key=True)
+    group_name = models.CharField(max_length=45)
+    sort_order = models.IntegerField(blank=True, null=True)
+    note = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'account_group'
+
+
+class AccountGroupList(models.Model):
+    uid = models.AutoField(primary_key=True)
+    account_group_uid = models.CharField(max_length=45)
+    acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
+    note = models.CharField(max_length=200, blank=True, null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'account_group_list'
