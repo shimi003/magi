@@ -50,6 +50,47 @@ def budget(request):
     return render(request, 'budget.html', context)
 
 
+#    path(r'account_group/', views.account_group, name='account_group'),
+#    path(r'account_group/add/', views.account_group_add, name='account_group_add'),
+#    path(r'account_group_list/', views.account_group_list, name='account_group_list'),
+#    path(r'account_group_list/add/', views.account_group_list_add, name='account_group_list_add'),
+#
+
+def account_group(request):
+    context={
+        'accout_group': getAccountGroupList(),
+    }
+    return render(request, 'account_group.html', context)
+
+
+def account_group_add(request):
+    context={}
+    return render(request, 'not_impliment.html', context)
+
+
+def account_group_list(request):
+    context={}
+    return render(request, 'not_impliment.html', context)
+
+
+def account_group_list_add(request):
+    context={}
+    return render(request, 'not_impliment.html', context)
+
+
+def getAccountGroupList():
+    acgl = db.AccountGroupList.objects.all()
+    d=[]
+    for entry in acgl:
+        d.append({
+            'uid': entry.uid,
+            'グループ名': entry.group_name,
+            'sort_order': entry.sort_order,
+            '特記事項': entry.note,
+        })
+    return d
+
+
 def getCostBudgetList():
     qs_bot = db.AccBot.objects.filter(acc_mid_uid__acc_top_uid=u.AccType['Cost']).order_by('sort_order')
     d = {}
@@ -70,12 +111,6 @@ def getCostBudgetList():
     d['費用予算(月間)合計'] = {'uid': '', 'name': '', 'amount': total, 'note': ''}
     return d
 
-
-#TODO 以下および関連メソッドの実装
-#def account_group
-#def account_group_add
-#def account_group_list
-#def account_group_list_add
 
 def fixed_asset(request):
     context = {
@@ -234,6 +269,7 @@ def getAccViewList():
 
 def getRegularlyPaymentList():
     qs = db.RegularlyPayment.objects.all()
+    total=0
     d = []
     for entry in qs:
         d.append({
@@ -245,6 +281,17 @@ def getRegularlyPaymentList():
             'payment_day': entry.payment_day,
             'note': entry.note,
         })
+        total += entry.amount_per_month
+
+    d.append({
+        'id': '',
+        'is_regist_automaticaly': False,
+        'acc_name': '合計',
+        'acc_name_from': '',
+        'amount_per_month': total,
+        'payment_day': '',
+        'note': '',
+    })
     return d
 
 
