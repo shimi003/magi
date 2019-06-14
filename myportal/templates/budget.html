@@ -20,7 +20,13 @@
             <tr>
               <td>{{ val.uid }}</td>
               <td>{{ val.name }}</td>
-              <td>{{ val.amount }}</td>
+              <td>
+                {% if val.uid %}
+                  <a href={% url 'budget_edit_id' val.uid %}>{{ val.amount }}</a>
+                {% else %}
+                  {{ val.amount }}
+                {% endif %}
+              </td>
               <td>{{ val.note }}</td>
             </tr>
           {% endfor %}

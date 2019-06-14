@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timedelta
 import logging as log
 
 ReportType = {
@@ -57,6 +58,21 @@ def cleanMonth(month):
         return  datetime.now().month
     except TypeError:
         return  datetime.now().month
+
+
+def createCurrentDateString():
+    year = datetime.now().year
+    month = datetime.now().month
+    day = datetime.now().day
+    return '{:04}'.format(year) + '{:02}'.format(month) + '{:02}'.format(day)
+
+
+def createYesterdayDateString():
+    yeaterday = datetime.now() - timedelta(days=1)
+    year = yeaterday.year
+    month = yeaterday.month
+    day = yeaterday.day
+    return '{:04}'.format(year) + '{:02}'.format(month) + '{:02}'.format(day)
 
 
 def createCurrentYearMonthString(year, month):

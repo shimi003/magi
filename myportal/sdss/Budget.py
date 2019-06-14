@@ -4,6 +4,21 @@ import sdss.models as db
 from django.db.models import Sum
 import sdss.Utility as u
 
+
+def getNote(i_acc_bot_uid):
+    if u.isIntAndNotZero(i_acc_bot_uid) == False:
+        return ''
+    else:
+        if db.Budget.objects.filter(acc_bot_uid=i_acc_bot_uid).exists():
+            qs_acc_list = db.Budget.objects.filter(acc_bot_uid=i_acc_bot_uid)
+            for qs_acc in qs_acc_list:
+                strFrom = qs_acc.from_field
+                strFor = qs_acc.for_field
+                if isTermInNow(strFrom, strFor):
+                    return qs_acc.note
+        return ''
+
+
 def getBudget(i_acc_bot_uid):
 
     if u.isIntAndNotZero(i_acc_bot_uid) == False:
