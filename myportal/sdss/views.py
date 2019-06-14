@@ -43,11 +43,42 @@ def index(request):
     return render(request, 'sdss.html', context)
 
 
+####
 def budget(request):
     context = {
+        'view_name':    'sdss 2.0 budget view',
         'budget_list': getCostBudgetList(),
     }
     return render(request, 'budget.html', context)
+
+
+def budget_edit_id(request, id):
+    context = {
+        'id':       id,
+        'acc_name': db.AccBot.objects.get(uid=id).name,
+        'note':     db.AccBot.objects.get(uid=id).note,
+        'before':   bd.getBudget(id),
+    }
+    return render(request, 'budget_id.html', context)
+
+
+def budget_change(request):
+    # TODO 変更履歴の登録
+    # なければ新規、あれば変更
+    budget_qs = db.Budget.objects.filter(acc_bot_uid=db.AccBot.objects.get(uid=request.POST['id'])).order_by('for_field')
+    if budget_qs.count() > 0:
+        budget = budget_qs[0]
+        if budget.amount_per_month != request.POST['after']:
+            if budget.for_field == '' or budget.for_field > u.createYesterdayDateString():
+                budget.for_field = u.createYesterdayDateString()
+                budget.save()
+    db.Budget.objects.create(
+        acc_bot_uid=      db.AccBot.objects.get(uid=request.POST['id']),
+        from_field=       u.createCurrentDateString(),
+        amount_per_month= request.POST['after'],
+        note=             request.POST['cause'],
+    )
+    return redirect('/magi/sdss/budget')
 
 
 def getCostBudgetList():
@@ -59,12 +90,13 @@ def getCostBudgetList():
             d[entry.acc_mid_uid.name] = []
 
         budget = int(bd.getBudget(entry.uid))
+        note = bd.getNote(entry.uid)
         total += budget
         d[entry.acc_mid_uid.name].append({
             'uid': entry.uid,
             'name': entry.name,
             'amount': budget,
-            'note': entry.note if entry.note is not None else '' ,
+            'note': note,
         })
 
     d['費用予算(月間)合計'] = {'uid': '', 'name': '', 'amount': total, 'note': ''}

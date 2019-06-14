@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import AccBot, AccMid, AccTop, Journal, Budget
+from .models import AccBot, AccMid, AccTop, Journal, Budget, FixedAsset
 
 # Register your models here.
 class AccBotAdmin(admin.ModelAdmin):
@@ -69,9 +69,29 @@ class BudgetAdmin(admin.ModelAdmin):
     amount_per_month_alias.short_description = '月間予算'
 
 
+class FixedAssetAdmin(admin.ModelAdmin):
+    list_display = (
+        'uid',
+        'acc_bot_uid',
+        'asset_no',
+        'asset_name',
+        'get_date',
+        'acquisition_cost',
+        'carrying_value',
+        'amortization_way',
+        'amortization_term_in_month',
+        'passed_months',
+        'amortization_cost_per_month',
+        'amortizated_total_cost',
+        'sales_income',
+        'is_using',
+        'note',
+    )
+
 
 admin.site.register(AccBot, AccBotAdmin)
 admin.site.register(AccMid, AccMidAdmin)
 admin.site.register(AccTop, AccTopAdmin)
 admin.site.register(Journal, JournalAdmin)
 admin.site.register(Budget, BudgetAdmin)
+admin.site.register(FixedAsset, FixedAssetAdmin)

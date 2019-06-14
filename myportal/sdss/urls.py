@@ -7,6 +7,8 @@ urlpatterns = [
     #path(r'test/', views.test, name='test'),
     path(r'journal/', views.journal, name='journal'),
     path(r'budget/', views.budget, name='budget'),
+    path(r'budget_edit/<id>/', views.budget_edit_id, name='budget_edit_id'),
+    path(r'budget_change', views.budget_change, name='budget_change'),
     path(r'bs/', views.bs, name='bs'),
     path(r'pl/', views.pl, name='pl'),
     path(r'detail/', views.detail, name='detail'),
@@ -29,4 +31,9 @@ urlpatterns = [
     path(r'fixed_asset/', views.fixed_asset, name='fixed_asset'),
     path(r'fixed_asset/addform/', views.fixed_asset_addform, name='fixed_asset_addform'),
     path(r'fixed_asset/regist/', views.fixed_asset_regist, name='fixed_asset_regist'),
+
+    path(r'account_group/', views.account_group, name='account_group'),
+    path(r'account_group/add/', views.account_group_add, name='account_group_add'),
+    path(r'account_group_list/', views.account_group_list, name='account_group_list'),
+    path(r'account_group_list/add/', views.account_group_list_add, name='account_group_list_add'),
 ]

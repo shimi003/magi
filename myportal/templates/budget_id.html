@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+  {% load humanize %}
+  <div class="container-fluid">
+    <form method="post" name="budget_regist_form" action="{% url 'budget_change' %}">
+      {% csrf_token %}
+      <table class="table table-striped table-hover table-bordered table-condensed">
+        <thead class="thead-light">
+          <tr>
+            <th rowspan="2">勘定科目名</th>
+            <th rowspan="2">特記事項</th>
+            <th colspan="2">予算金額(月額)</th>
+            <th rowspan="2">変更理由</th>
+          </tr>
+          <tr>
+            <th>変更前</th>
+            <th>変更後</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>{{ acc_name }}</td>
+            <td>{{ note }}</td>
+            <td>{{ before }}</td>
+            <td><input type="number" name="after" required/></td>
+            <td><input type="text" name="cause"/></td>
+          </tr>
+        </tbody>
+      </table>
+      <input type="hidden" name="id" value="{{ id }}" />
+      <input type="submit" value="変更" name='regist' />
+      <input type="button" value="戻る" name='cancel' onclick="history.back()" />
+    </form>
+  </div>
+{% endblock %}
