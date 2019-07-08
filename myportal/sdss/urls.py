@@ -32,8 +32,8 @@ urlpatterns = [
     path(r'fixed_asset/addform/', views.fixed_asset_addform, name='fixed_asset_addform'),
     path(r'fixed_asset/regist/', views.fixed_asset_regist, name='fixed_asset_regist'),
 
-    path(r'account_group/', views.account_group, name='account_group'),
-    path(r'account_group/add/', views.account_group_add, name='account_group_add'),
-    path(r'account_group_list/', views.account_group_list, name='account_group_list'),
-    path(r'account_group_list/add/', views.account_group_list_add, name='account_group_list_add'),
+    #path(r'account_group/', views.account_group, name='account_group'),
+    #path(r'account_group/add/', views.account_group_add, name='account_group_add'),
+    #path(r'account_group_list/', views.account_group_list, name='account_group_list'),
+    #path(r'account_group_list/add/', views.account_group_list_add, name='account_group_list_add'),
 ]
