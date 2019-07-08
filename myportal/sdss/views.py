@@ -52,6 +52,8 @@ def budget(request):
     return render(request, 'budget.html', context)
 
 
+
+
 def budget_edit_id(request, id):
     context = {
         'id':       id,
@@ -458,6 +460,39 @@ def journal(request):
         'message': '',
     }
     return render(request, 'journal.html', context)
+
+
+def asset_suii(request, year=0):
+    year = u.cleanYear(year)
+    bs = b()
+    bslist = bs.getMiddleYearStatement(year, 0)
+    bslist.pop('自己資本', 'no match')
+    bslist.pop('他人資本', 'no match')
+    bslist.pop('評価換算差額等', 'no match')
+    bslist.pop('固定資産', 'no match')
+    yearList = ['2019', '2018',]
+    monthList = getMonthList()
+    colors = (
+        (0,153,255,10),
+        (0,204,204,10),
+        (0.204,153,10),
+        (0,0,102,10),
+        (0,51,51,10),
+        (51,0,51,10),
+        (102,0,0,10),
+        (102,102,0,10),
+        (255,102,0,10),
+    )
+    context = {
+        'label': monthList,
+        'bs_list': bslist,
+        'year_list': yearList,
+        'colors': colors,
+        'view_name': 'sdss 2.0 Asset Summary Suii',
+        'target_year': str(year),
+        'message': '',
+    }
+    return render(request, 'asset_suii.html', context)
 
 
 def summary(request, year=0):

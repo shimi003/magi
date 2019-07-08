@@ -71,7 +71,7 @@ class BSClass(FSClass):
 
 
 
-    def getMiddleYearStatement(self, year):
+    def getMiddleYearStatement(self, year, fill=''):
         try:
             year = u.cleanYear(year)
             dic = {}
@@ -100,9 +100,9 @@ class BSClass(FSClass):
                         curr_br = qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
                         curr_cr = qs.filter(cr_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
                         current += u.diffBrCr(curr_br, curr_cr, brCrDirection)
-                        d.append(current if current != 0 else '')
+                        d.append(current if current != 0 else fill)
                     else:
-                        d.append('')
+                        d.append(fill)
                 dic[acc.name] = d
             return dic
 
