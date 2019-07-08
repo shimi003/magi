@@ -31,6 +31,8 @@ urlpatterns = [
     path(r'fixed_asset/', views.fixed_asset, name='fixed_asset'),
     path(r'fixed_asset/addform/', views.fixed_asset_addform, name='fixed_asset_addform'),
     path(r'fixed_asset/regist/', views.fixed_asset_regist, name='fixed_asset_regist'),
+    path(r'asset_suii/', views.asset_suii, name='asset_suii'),
+    path(r'asset_suii/<year>/', views.asset_suii, name='asset_suii'),
 
     #path(r'account_group/', views.account_group, name='account_group'),
     #path(r'account_group/add/', views.account_group_add, name='account_group_add'),
