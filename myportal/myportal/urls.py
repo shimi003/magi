@@ -20,6 +20,7 @@ from django.conf import settings
 urlpatterns = [
     path('sdss/', include('sdss.urls')),
     path('oracle/', include('oracle.urls')),
+    path('temp/', include('temperature.urls')),
     path('admin/', admin.site.urls),
 ]
 
