@@ -4,11 +4,9 @@ from temperature.models import Meas as meas
 
 # Create your views here.
 def index(request):
-
     dates_list = meas.objects.values_list('date', flat=True).order_by('-date').distinct()
     dates = [entry0 for entry0 in dates_list]
     _date = dates[0]
-
     label_list = meas.objects.values_list('time', flat=True).filter(date=_date)
     temp_list = meas.objects.values_list('temp', flat=True).filter(date=_date)
     hum_list = meas.objects.values_list('hum', flat=True).filter(date=_date)
@@ -59,22 +57,30 @@ def date(request, ymd):
         index(request)
 
 
-
-
-@ensure_csrf_cookie
 def regist(request):
-    #TODO not impliment
-    if 'date' in request.POST and 'time' in request.POST and 'temp' in request.POST and 'pres' in request.POST and 'hum' in request.POST:
-        meas.objects.create(
-            date=request.POST['date'],
-            time = request.POST['time'],
-            temp = request.POST['temp'],
-            pres = request.POST['pres'],
-            hum = request.POST['hum'],
-        )
-        return HttpResponse('ok')
+    if request.method == 'POST':
+        if 'date' in request.POST and 'time' in request.POST and 'temp' in request.POST and 'pres' in request.POST and 'hum' in request.POST:
+            context = {
+                'date': request.POST['date'],
+                'time': request.POST['time'],
+                'temp': request.POST['temp'],
+                'pres': request.POST['pres'],
+                'hum':  request.POST['hum'],
+            }
+            meas.objects.create(
+                date=request.POST['date'],
+                time = request.POST['time'],
+                temp = request.POST['temp'],
+                pres = request.POST['pres'],
+                hum = request.POST['hum'],
+            )
+            return render(request, 'test_post.html', context)
+            #return HttpResponse('ok')
+        else:
+            return HttpResponse('ng')
     else:
-        return HttpResponse('ng')
+        return render(request, 'get_csrf.html')
+
 
 #for client by python
 # URL = "sample.html"

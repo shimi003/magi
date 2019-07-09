@@ -1,10 +1,6 @@
-/myportal/myportal/__pycache__/*
-/myportal/myportal/__pycache__/*
-/myportal/sdss/__pycache__/*
-/myportal/oracle/__pycache__/*
-/.venv/
-/__pycache__/*
-/data/*
-/*.json
-/*.db
-/*.dump
+.venv
+__pycache__/
+data/*
+*.json
+*.db
+*.dump

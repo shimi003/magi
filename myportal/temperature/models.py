@@ -2,7 +2,7 @@ from django.db import models
 
 # Create your models here.
 class Meas(models.Model):
-    uid = models.IntegerField(primary_key=True)
+    uid = models.AutoField(primary_key=True)
     date = models.TextField()
     time = models.TextField()
     temp = models.FloatField()
