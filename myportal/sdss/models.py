@@ -12,8 +12,9 @@ class AccBot(models.Model):
     acc_mid_uid = models.ForeignKey('AccMid', models.DO_NOTHING, db_column='acc_mid_uid', related_name='acc_mid_uid_bspl')
     sort_order = models.IntegerField(blank=True, null=True)
     acc_cs_uid = models.ForeignKey('AccMid', models.DO_NOTHING, db_column='acc_cs_uid', related_name='acc_mid_id_cs')
-    name = models.CharField(max_length=45)
+    name = models.CharField(max_length=45, blank=True, null=True)
     name_ac = models.CharField(max_length=45, blank=True, null=True)
+    export_name = models.CharField(max_length=45)
     note = models.CharField(max_length=200, blank=True, null=True)
 
     def __str__(self):

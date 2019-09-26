@@ -448,15 +448,21 @@ def regist(request):
     # TODO ハードコーディングなのでショートカットにするとか
     return redirect('/magi/sdss')
 
+def journal_export(request, year=0):
+    yaer = u.cleanYear(year)
+    return HttpResponse("Not Impliment!" + year)
+
 
 def journal(request):
     # | uid | date | group_id | br_acc_bot_name | br_amount | ... |
     # TODO extract year, month ...etc
     journal_qs = db.Journal.objects.order_by('-date')
     journal_list = getJournalList(journal_qs)
+    yearList = ['2019', '2018',]
     context = {
         'journal_list': journal_list,
-        'view_name': 'sdss 2.0 journal view',
+        'year_list':    yearList,
+        'view_name':    'sdss 2.0 journal view',''
         'message': '',
     }
     return render(request, 'journal.html', context)
