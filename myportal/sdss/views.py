@@ -458,12 +458,19 @@ def journal_export(request, year=0):
     filename += u.getStrTimeStamp()
     filename += '.xlsx'
     wb = openpyxl.load_workbook('/home/share/template_f_s.xlsx')
-    journal_qs = db.Journal.objects.filter(date__range=(int(year)-1,int(year))).order_by('date')
+    y_startDate = year + '0101'
+    y_endDate = year + '1231'
+    journal_qs = db.Journal.objects.filter(date__range=(y_startDate,y_endDate)).order_by('date')
     journal_list = getExportJournalList(journal_qs)
-    sheet = wb['01']
+    currentSheetName = '01'
+    sheet = wb[currentSheetName]
     current_col=1
     current_row=5
     for journal in journal_list:
+        if currentSheetName != journal['month']:
+            currentSheetName = journal['month']
+            sheet = wb[currentSheetName]
+            current_row=5
         sheet.cell(row=current_row, column=1, value=journal['month'])
         sheet.cell(row=current_row, column=2, value=journal['day'])
         sheet.cell(row=current_row, column=3, value=journal['br_name'])
