@@ -29,10 +29,10 @@
         <a class="btn btn-default border border-primary big" href="/magi/sdss/pl/">PL</a>
         <a class="btn btn-default border border-primary big" href="/magi/sdss/journal/">Journal</a>
         <a class="btn btn-default border border-primary big" href="/magi/sdss/suii/">Suii</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/detail/">Detail</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/regularly-payment/">Regularly-Payment</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/acc_list/">Account List</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/fixed_asset/">Fixed Asset</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'detail' %}">Detail</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'regularly_view' %}">Regularly-Payment</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'acc_list' %}">Account List</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'fixed_asset' %}">Fixed Asset</a>
         <a class="btn btn-default border border-primary big" href="{% url 'asset_suii' %}">Asset Graph</a>
         <br />
         <br />

@@ -45,6 +45,16 @@ def cleanYear(year):
         print('TypeError')
         return  datetime.now().year
 
+def getStrTimeStamp():
+    '''create timestamp string from now date and time. ex. 2019092712836724 '''
+    nowdt = datetime.now()
+    strTimeStamp =  '{:04d}'.format(nowdt.year)
+    strTimeStamp += '{:02d}'.format(nowdt.month)
+    strTimeStamp += '{:02d}'.format(nowdt.day)
+    strTimeStamp += '{:02d}'.format(nowdt.second)
+    strTimeStamp += '{:05d}'.format(nowdt.microsecond)
+    return strTimeStamp
+
 
 def cleanMonth(month):
     try:

@@ -9,3 +9,4 @@
 /sdss/__init__.py
 /oracle/__pycache__/*.pyc
 /__pycache__/*.pyc
+/gitignore_dir

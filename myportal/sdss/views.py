@@ -445,8 +445,46 @@ def regist(request):
             )
             registerd = True
             log.info('register journal object')
-    # TODO ハードコーディングなのでショートカットにするとか
+    # TODO ハードコーディングなのでショートカットにするとか200
     return redirect('/magi/sdss')
+
+import openpyxl
+
+def journal_export(request, year=0):
+    yaer = u.cleanYear(year)
+    filename = 'fs_'
+    filename += year
+    filename += '_'
+    filename += u.getStrTimeStamp()
+    filename += '.xlsx'
+    wb = openpyxl.load_workbook('/home/share/template_f_s.xlsx')
+    y_startDate = year + '0101'
+    y_endDate = year + '1231'
+    journal_qs = db.Journal.objects.filter(date__range=(y_startDate,y_endDate)).order_by('date')
+    journal_list = getExportJournalList(journal_qs)
+    currentSheetName = '01'
+    sheet = wb[currentSheetName]
+    current_col=1
+    current_row=5
+    for journal in journal_list:
+        if currentSheetName != journal['month']:
+            currentSheetName = journal['month']
+            sheet = wb[currentSheetName]
+            current_row=5
+        sheet.cell(row=current_row, column=1, value=journal['month'])
+        sheet.cell(row=current_row, column=2, value=journal['day'])
+        sheet.cell(row=current_row, column=3, value=journal['br_name'])
+        sheet.cell(row=current_row, column=4, value=journal['br_amount'])
+        sheet.cell(row=current_row, column=5, value=journal['cr_name'])
+        sheet.cell(row=current_row, column=6, value=journal['cr_amount'])
+        sheet.cell(row=current_row, column=7, value=journal['note'])
+        current_row += 1
+
+    response = HttpResponse(content_type='application/vnd.ms-excel')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    wb.save(response)
+    return response
 
 
 def journal(request):
@@ -454,9 +492,11 @@ def journal(request):
     # TODO extract year, month ...etc
     journal_qs = db.Journal.objects.order_by('-date')
     journal_list = getJournalList(journal_qs)
+    yearList = ['2019', '2018',]
     context = {
         'journal_list': journal_list,
-        'view_name': 'sdss 2.0 journal view',
+        'year_list':    yearList,
+        'view_name':    'sdss 2.0 journal view',''
         'message': '',
     }
     return render(request, 'journal.html', context)
@@ -623,6 +663,43 @@ def getJournalList(qs_journal):
             'note':      entry.note,
         })
     return d
+
+def getExportJournalList(qs_journal):
+    d = []
+    for entry in qs_journal:
+        br_name = ''
+        cr_name =''
+        if entry.br_acc_bot_uid.name == '（選択してください）':
+            br_name = ''
+        elif entry.br_acc_bot_uid.export_name != 'null':
+            br_name = entry.br_acc_bot_uid.export_name
+        else:
+            br_name = entry.br_acc_bot_uid.name
+
+        if entry.cr_acc_bot_uid.name == '（選択してください）':
+            cr_name = ''
+        elif entry.cr_acc_bot_uid.export_name  != 'null':
+            cr_name = entry.cr_acc_bot_uid.export_name
+        else:
+            cr_name = entry.cr_acc_bot_uid.name
+
+        d.append({
+            'id':        entry.uid,
+            'year':      entry.date[:4],
+            'month':     entry.date[4:6],
+            'day':       entry.date[6:8],
+            'group_id':  entry.group_id,
+            'br_name':   br_name,
+            'br_amount': entry.br_amount if entry.br_amount != 0 else '',
+            'cr_name':   cr_name,
+            'cr_amount': entry.cr_amount if entry.cr_amount != 0 else '',
+            'note':      entry.note,
+        })
+    return d
+
+
+
+
 
 #TODO すでに処理が重そうな気がするので今後パフォーマンスに関する何らかの処置が必要かも
 #TODO 貸借差額=当期損益の計算および表示
