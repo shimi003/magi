@@ -2,6 +2,18 @@
 {% block content %}
   {% load humanize %}
   <div  class="container-fluid">
+    <form method="post" action="/">
+      <label>Excel Export 年選択</label>
+      <select name="year">
+        {% for year in year_list %} {# year_list = ['2018', '2019', ...] #}
+          <option value="{{ year }}">{{ year }}</option>
+        {% endfor %}
+      </select>
+      <input type="button" value="Export" onclick="move()"/>
+    </form>
+  </div>
+
+  <div  class="container-fluid">
     <table class="table table-striped table-bordered">
       <thead class="thead-light">
         <tr>
@@ -31,4 +43,13 @@
       </tbody>
     </table>
   </div>
+{% endblock %}
+
+{% block extra_js %}
+  <script type="text/javascript">
+    function move(){
+      window.location.href="{% url 'journal_export' %}"
+        + $("select[name='year']").val()
+    };
+  </script>
 {% endblock %}
