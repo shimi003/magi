@@ -225,6 +225,7 @@ def regularly_view(request):
     # toriaezu view only...
 
     context = {
+        'today_date': datetime.now().strftime('%Y-%m-%d'),
         'title_jp': '毎月の支払項目とその金額の一覧です。',
         'regularly_payment_list': getRegularlyPaymentList(),
     }
@@ -448,9 +449,33 @@ def regist(request):
     # TODO ハードコーディングなのでショートカットにするとか200
     return redirect('/magi/sdss')
 
+
+def regist_regularly_payment(request):
+    '''指定された年月日に登録済みの定期支払項目を一括で自動登録する'''
+    today_str = u.createCurrentDateString()
+    strdate = request.POST['reg_regist_date'].replace('-', '')
+    note = today_str + ' 自動登録です'
+    qs_reg_list = db.RegularlyPayment.objects.all()
+    groupid = datetime.now().strftime('%Y%m%d%H%M%S%f')
+    for qs in qs_reg_list:
+        if qs.is_regist_automaticaly == 1:
+            db.Journal.objects.create(
+                date = strdate,
+                group_id = groupid,
+                br_acc_bot_uid = db.AccBot.objects.get(uid=qs.acc_bot_uid.uid),
+                br_amount = u.getEmptyOrValueInt(qs.amount_per_month),
+                cr_acc_bot_uid = db.AccBot.objects.get(uid=qs.acc_bot_uid_from.uid),
+                cr_amount = u.getEmptyOrValueInt(qs.amount_per_month),
+                note = note,
+            )
+    return redirect('/magi/sdss/regularly-payment/')
+
+
 import openpyxl
 
+
 def journal_export(request, year=0):
+    '''指定された年の1〜12月の仕訳を記載したエクセルファイルをダウンロードする'''
     yaer = u.cleanYear(year)
     filename = 'fs_'
     filename += year
