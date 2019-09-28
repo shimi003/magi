@@ -454,7 +454,7 @@ def regist_regularly_payment(request):
     '''指定された年月日に登録済みの定期支払項目を一括で自動登録する'''
     today_str = u.createCurrentDateString()
     strdate = request.POST['reg_regist_date'].replace('-', '')
-    note = today_str + ' 自動登録です'
+    note = datetime.now().strftime('%Y%m%d%H%M') + ' 自動登録です'
     qs_reg_list = db.RegularlyPayment.objects.all()
     groupid = datetime.now().strftime('%Y%m%d%H%M%S%f')
     for qs in qs_reg_list:
