@@ -100,7 +100,7 @@ def getCostBudgetList():
             'amount': budget,
             'note': note,
         })
-
+    d['費用予算(月間)合計'] = []
     d['費用予算(月間)合計'].append({
         'uid': '',
         'name': '',
