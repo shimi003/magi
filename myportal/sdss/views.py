@@ -417,6 +417,14 @@ def getMonthList():
         month_list.append('{:02}'.format(i+1))
     return month_list
 
+def getMonthListAndTotal():
+    month_total_list = []
+    for i in range(12):
+        month_total_list.append('{:02}'.format(i+1))
+    month_total_list.append('合計')
+    return month_total_list
+
+
 
 def regist(request):
     #入力チェックと登録用データ作成
@@ -575,6 +583,7 @@ def summary(request, year=0):
         'bs_list': bslist,
         'pl_list': pllist,
         'month_list': getMonthList(),
+        'month_list_total': getMonthListAndTotal(),
         'year_list': yearList,
         'view_name': 'sdss 2.0 BS PL summary view',
         'target_year': str(year),
@@ -611,7 +620,8 @@ def pl(request, year=0):
     context = {
         'year_list': yearList,
         'pl_list': pllist,
-        'month_list': getMonthList(),
+        #'month_list': getMonthList(),
+        'month_list': getMonthListAndTotal(),
         'view_name': 'sdss 2.0 PL view',
         'target_year': str(year),
         'message': '',
