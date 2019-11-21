@@ -47,6 +47,9 @@ class PLClass(FSClass):
                 'list': [38000, 38000, 38000, ... 38000]
             ]
             '''
+            loss_total = 0
+            proloss_total = 0
+            profit_total = 0
 
             for acc in accListQs:
                 brCrDirection = acc.acc_mid_uid.acc_top_uid.is_br
@@ -55,7 +58,7 @@ class PLClass(FSClass):
 
                 # 12ヶ月いずれも出現しない勘定科目は登録しないのでその管理フラグ
                 wasNotChangeInYear = True
-
+                acc_total = 0
                 for i in range(12):
                     #各月の集計
                     currentYearMonth = u.createCurrentYearMonthString(year, i + 1)
@@ -67,11 +70,15 @@ class PLClass(FSClass):
                         curr_cr = qs.filter(cr_acc_bot_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
                         current = u.diffBrCr(curr_br, curr_cr, brCrDirection)
                         if brCrDirection > 0:
-                            loss[i]    += current
-                            proloss[i] -= current
+                            loss[i]       += current
+                            loss_total    += current
+                            proloss[i]    -= current
+                            proloss_total -= current
                         else:
-                            profit[i]  += current
-                            proloss[i] += current
+                            profit[i]     += current
+                            profit_total  += current
+                            proloss[i]    += current
+                            proloss_total += current
 
                         if current == 0:
                             d.append('')
@@ -79,10 +86,13 @@ class PLClass(FSClass):
                             wasNotChangeInYear = False
                             d.append(current)
                             #d.append(current if current != 0 else '')
+                            acc_total += current
                     else:
                         d.append('')
-                # 全部空欄なら追加しない
+                        # 全部空欄なら追加しない
+
                 if wasNotChangeInYear == False:
+                    d.append(acc_total)
                     ret.append({
                         'acc_name': acc.name,
                         'budget': bd.getBudget(acc.uid),
@@ -90,6 +100,9 @@ class PLClass(FSClass):
                     })
                     #dic[acc.name] = d
 
+            loss.append(loss_total)
+            profit.append(profit_total)
+            proloss.append(proloss_total)
             ret.append({'acc_name': '費用計', 'budget': '', 'list': loss,})
             ret.append({'acc_name': '利益計', 'budget': '', 'list': profit,})
             ret.append({'acc_name': '損益',   'budget': '', 'list': proloss,})
@@ -119,12 +132,16 @@ class PLClass(FSClass):
             loss    = [0] * 12
             proloss = [0] * 12
 
+            loss_total = 0
+            proloss_total = 0
+            profit_total = 0
+
             for acc in accListQs:
                 brCrDirection = acc.acc_top_uid.is_br
                 log.info('AccMid.name = ' + str(acc.name) + ' brCrDirection = ' + str(brCrDirection))
 
                 d = []
-
+                acc_total = 0
                 for i in range(12):
                     #各月の集計
                     currentYearMonth = u.createCurrentYearMonthString(year, i + 1)
@@ -134,18 +151,31 @@ class PLClass(FSClass):
                         curr_br = qs.filter(br_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('br_amount'))['br_amount__sum']
                         curr_cr = qs.filter(cr_acc_bot_uid__acc_mid_uid=acc.uid).aggregate(Sum('cr_amount'))['cr_amount__sum']
                         current = u.diffBrCr(curr_br, curr_cr, brCrDirection)
+                        acc_total += current
                         if brCrDirection > 0:
-                            loss[i]    += current
-                            proloss[i] -= current
+                            loss[i]       += current
+                            loss_total    += current
+                            proloss[i]    -= current
+                            proloss_total -= current
                         else:
-                            profit[i]  += current
-                            proloss[i] += current
+                            profit[i]     += current
+                            profit_total  += current
+                            proloss[i]    += current
+                            proloss_total += current
 
                         d.append(current if current != 0 else '')
                     else:
                         d.append('')
-
+                if acc_total == 0:
+                    d.append('')
+                else:
+                    d.append(acc_total)
                 dic[acc.name] = d
+
+            loss.append(loss_total)
+            profit.append(profit_total)
+            proloss.append(proloss_total)
+
             dic['費用計'] = loss
             dic['利益計'] = profit
             dic['損益'] = proloss
