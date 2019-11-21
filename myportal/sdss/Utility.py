@@ -1,5 +1,4 @@
-from datetime import datetime
-from datetime import timedelta
+from datetime import datetime, timedelta, timezone
 import logging as log
 
 ReportType = {
@@ -70,15 +69,24 @@ def cleanMonth(month):
         return  datetime.now().month
 
 
+def get_nowdt():
+    '''日本時間の現在日時のdatetimeオブジェクトを返す'''
+    JST = timezone(timedelta(hours=+9), 'JST')
+    return datetime.now(JST)
+
+
 def createCurrentDateString():
-    year = datetime.now().year
-    month = datetime.now().month
-    day = datetime.now().day
+    '''今日の年月日を返す（例：20190901）'''
+    today = get_nowdt()
+    year = today.year
+    month = today.month
+    day = today.day
     return '{:04}'.format(year) + '{:02}'.format(month) + '{:02}'.format(day)
 
 
 def createYesterdayDateString():
-    yeaterday = datetime.now() - timedelta(days=1)
+    '''前日の年月日を返す（例：20190831）'''
+    yeaterday = get_nowdt() - timedelta(days=1)
     year = yeaterday.year
     month = yeaterday.month
     day = yeaterday.day

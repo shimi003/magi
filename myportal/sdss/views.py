@@ -11,7 +11,7 @@ from django.db.models import Sum
 from django.db.models import Count
 from django.db.models.functions import Left
 
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 import logging as log
 from dateutil.relativedelta import relativedelta
 
@@ -33,7 +33,7 @@ def index(request):
     context = {
         'i_list':       ['1','2','3','4','5'],
         'b_or_c':       ['br', 'cr'],
-        'journal_date': datetime.now().strftime('%Y-%m-%d'),
+        'journal_date': u.get_nowdt().strftime('%Y-%m-%d'),
         'accbot_dic':   accbot_dic,  # iru...?
         'account_list': accbot_list, # iru...?
         'listgroup':    accbot_listgroup,
@@ -100,8 +100,13 @@ def getCostBudgetList():
             'amount': budget,
             'note': note,
         })
-
-    d['費用予算(月間)合計'] = {'uid': '', 'name': '', 'amount': total, 'note': ''}
+    d['費用予算(月間)合計'] = []
+    d['費用予算(月間)合計'].append({
+        'uid': '',
+        'name': '',
+        'amount': total,
+        'note': ''
+    })
     return d
 
 
@@ -118,7 +123,7 @@ def fixed_asset_addform(request):
     fixed_asset_account_list = getAccountList(fixed_asset_acc_qs)
 
     context = {
-        'today': datetime.now().strftime('%Y-%m-%d'),
+        'today': u.get_nowdt().strftime('%Y-%m-%d'),
         'acc_list': fixed_asset_account_list,
         'title_jp': '固定資産登録画面',
     }
@@ -166,7 +171,7 @@ def getPassedMonths(dt_date):
     #if len(ymd) < 3: return 0
     #past_date = datetime(int(ymd[0]),int(ymd[1]),int(ymd[2]))
     if isinstance(dt_date, datetime):
-        now_date=datetime.now()
+        now_date=u.get_nowdt()
         passed_years=now_date.year-dt_date.year
         passed_months=now_date.month-dt_date.month
         return passed_years*12+passed_months
@@ -223,9 +228,8 @@ def getFixedAssetList():
 def regularly_view(request):
     # output account_name(str), payment_day(str), amount(int), note(str)
     # toriaezu view only...
-
     context = {
-        'today_date': datetime.now().strftime('%Y-%m-%d'),
+        'today_date': u.get_nowdt().strftime('%Y-%m-%d'),
         'title_jp': '毎月の支払項目とその金額の一覧です。',
         'regularly_payment_list': getRegularlyPaymentList(),
     }
@@ -375,12 +379,12 @@ def getAccountSuii(year, month, accID):
     curr_cr_qs = qs.filter(cr_acc_bot_uid=accID)
 
     # TODO 2019年現在にyearが２０２０だった場合の考慮はしてないが不要？
-    isSyoribiYM = datetime.now().year == year and datetime.now().month == month
+    isSyoribiYM = u.get_nowdt().year == year and u.get_nowdt().month == month
 
     # 1日 ~ 31日まで借方と貸方の差分を取得する。2月31日とかも処理するけど文字列型なので問題なし
     for i in range(1,32):
         # 処理当日以降のは登録しない
-        if isSyoribiYM and i > datetime.now().day:
+        if isSyoribiYM and i > u.get_nowdt().day:
             dic.append(0)
         else:
             today_br_sum = u.getEmptyOrValueInt(curr_br_qs.filter(date=(strDate+'{:02}'.format(i))).aggregate(Sum('br_amount'))['br_amount__sum'])
@@ -413,11 +417,19 @@ def getMonthList():
         month_list.append('{:02}'.format(i+1))
     return month_list
 
+def getMonthListAndTotal():
+    month_total_list = []
+    for i in range(12):
+        month_total_list.append('{:02}'.format(i+1))
+    month_total_list.append('合計')
+    return month_total_list
+
+
 
 def regist(request):
     #入力チェックと登録用データ作成
     #TODO 入力チェックとUI側の入力チェックもこっちへ移す
-    groupid = datetime.now().strftime('%Y%m%d%H%M%S%f')
+    groupid = u.get_nowdt().strftime('%Y%m%d%H%M%S%f')
     strdate = request.POST['journal_date'].replace('-','')
     log.info('regist date as: ' + strdate)
 
@@ -454,9 +466,9 @@ def regist_regularly_payment(request):
     '''指定された年月日に登録済みの定期支払項目を一括で自動登録する'''
     today_str = u.createCurrentDateString()
     strdate = request.POST['reg_regist_date'].replace('-', '')
-    note = today_str + ' 自動登録です'
+    note = u.get_nowdt().strftime('%Y/%m/%d %H:%M') + ' 自動登録です'
     qs_reg_list = db.RegularlyPayment.objects.all()
-    groupid = datetime.now().strftime('%Y%m%d%H%M%S%f')
+    groupid = u.get_nowdt().strftime('%Y%m%d%H%M%S%f')
     for qs in qs_reg_list:
         if qs.is_regist_automaticaly == 1:
             db.Journal.objects.create(
@@ -571,6 +583,7 @@ def summary(request, year=0):
         'bs_list': bslist,
         'pl_list': pllist,
         'month_list': getMonthList(),
+        'month_list_total': getMonthListAndTotal(),
         'year_list': yearList,
         'view_name': 'sdss 2.0 BS PL summary view',
         'target_year': str(year),
@@ -607,7 +620,8 @@ def pl(request, year=0):
     context = {
         'year_list': yearList,
         'pl_list': pllist,
-        'month_list': getMonthList(),
+        #'month_list': getMonthList(),
+        'month_list': getMonthListAndTotal(),
         'view_name': 'sdss 2.0 PL view',
         'target_year': str(year),
         'message': '',
