@@ -585,7 +585,7 @@ def summary(request, year=0):
         'month_list': getMonthList(),
         'month_list_total': getMonthListAndTotal(),
         'year_list': yearList,
-        'view_name': 'sdss 2.0 BS PL summary view',
+        'view_name': 'sdss 2.0 PL BS summary view',
         'target_year': str(year),
         'message': '',
     }
