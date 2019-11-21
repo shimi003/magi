@@ -44,7 +44,8 @@
 {% block extra_js %}
   <script type="text/javascript">
     function moveYear(){
-      window.location.href=$("select[name='year']").val();
+      window.location.href="{% url 'bs' %}"
+       + $("select[name='year']").val();
     };
   </script>
 {% endblock %}
