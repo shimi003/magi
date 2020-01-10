@@ -31,7 +31,7 @@ def index(request):
     accbot_list = getAccountList(accbot_qs)
     accbot_listgroup = getAccountListByGroup()
     context = {
-        'i_list':       ['1','2','3','4','5'],
+        'i_list':       ['1','2','3','4','5', '6', '7', '8'],
         'b_or_c':       ['br', 'cr'],
         'journal_date': u.get_nowdt().strftime('%Y-%m-%d'),
         'accbot_dic':   accbot_dic,  # iru...?
@@ -439,6 +439,9 @@ def regist(request):
     register_corresp.append({'br_a': 'br_3_a', 'cr_a': 'cr_3_a', 'br_c': 'br_3_c', 'cr_c': 'cr_3_c'})
     register_corresp.append({'br_a': 'br_4_a', 'cr_a': 'cr_4_a', 'br_c': 'br_4_c', 'cr_c': 'cr_4_c'})
     register_corresp.append({'br_a': 'br_5_a', 'cr_a': 'cr_5_a', 'br_c': 'br_5_c', 'cr_c': 'cr_5_c'})
+    register_corresp.append({'br_a': 'br_6_a', 'cr_a': 'cr_6_a', 'br_c': 'br_6_c', 'cr_c': 'cr_6_c'})
+    register_corresp.append({'br_a': 'br_7_a', 'cr_a': 'cr_7_a', 'br_c': 'br_7_c', 'cr_c': 'cr_7_c'})
+    register_corresp.append({'br_a': 'br_8_a', 'cr_a': 'cr_8_a', 'br_c': 'br_8_c', 'cr_c': 'cr_8_c'})
     registerd = False
     note_temp = ''
     for cor in register_corresp:
