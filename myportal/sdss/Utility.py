@@ -27,9 +27,6 @@ def getSelectableYearList():
     return ret
 
 
-def getSelectableYearList():
-    pass
-
 
 def cleanYear(year):
     year = getEmptyOrValueInt(year)

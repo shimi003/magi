@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta
 
 from sdss.BS import BSClass as b
 from sdss.PL import PLClass as p
+from sdss.RigidPL import RigidPLClass as r_p
 from sdss.Detail import DetailClass as d
 import sdss.Budget as bd
 import sdss.Utility as u
@@ -532,7 +533,8 @@ def journal(request):
     # TODO extract year, month ...etc
     journal_qs = db.Journal.objects.order_by('-date')
     journal_list = getJournalList(journal_qs)
-    yearList = ['2019', '2018',]
+    # yearList = ['2019', '2018',]
+    yearList = u.getSelectableYearList()
     context = {
         'journal_list': journal_list,
         'year_list':    yearList,
@@ -630,6 +632,68 @@ def pl(request, year=0):
         'message': '',
     }
     return render(request, 'pl.html', context)
+
+
+def rigid_pl(request, year=0):
+    year = u.cleanYear(year)
+    r_pl = r_p()
+
+    #売上総利益
+    netRevenue = r_pl.getNetRevenue(year)
+    costOfSales = r_pl.getCostOfSales(year)
+    grossMarginList = []
+    for i in range(12):
+        grossMarginList.append(netRevenue['total'][i] - costOfSales['total'][i])
+    grossMargin = {
+        '収益': netRevenue,
+        '売上原価': costOfSales,
+        '売上総利益': grossMarginList,
+    }
+    #
+    # #限界利益
+    # taxAndFocedCost = r_pl.getTaxAndForcedCost(year)
+    # lifeCost = r_pl.getLifeCost(year)
+    # limitIncomeList = []
+    # for i in range(12):
+    #     limitIncomeList.append(grossMarginList[i] - taxAndFocedCost[i] - lifeCost[i])
+    # limitIncome = {
+    #     '一般費':  taxAndFocedCost,
+    #     '生活費':  lifeCost,
+    #     '限界利益':limitIncomeList,
+    # }
+    #
+    # #その他の収益・費用等
+    # nonOperatingCost = r_pl.getNonOperatingCost(year)
+    # nonOperatingIncome = r_pl.getNonOperatingIncome(year)
+    # entertainmentCost = r_pl.getEntertainmentCost(year)
+    #
+    # netIncomeList = []
+    # for i in range(12):
+    #     netIncomeList.append(
+    #             limitIncomeList[i]
+    #          -  nonOperatingCost[i]
+    #          +  nonOperatingIncome[i]
+    #          -  entertainmentCost[i]
+    #     )
+    # netIncome = {
+    #     '営業外収益': nonOperatingIncome,
+    #     '営業外費用': nonOperatingCost,
+    #     '娯楽費': entertainmentCost,
+    #     '当月純利益': netIncomeList,
+    # }
+
+    yearList = u.getSelectableYearList()
+    context = {
+        'year_list': yearList,
+        '売上総利益': grossMargin,
+        # '限界利益': limitIncome,
+        # '当月純利益': netIncome,
+        # 'month_list': getMonthList(),
+        # 'view_name': 'sdss 2.0 Rigid PL view',
+        # 'target_year': str(year),
+        # 'message': '',
+    }
+    return render(request, 'rigid_pl.html', context)
 
 
 def detail(request, mid_class_uid=1, year=0):
