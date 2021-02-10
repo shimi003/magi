@@ -17,6 +17,7 @@ from dateutil.relativedelta import relativedelta
 
 from sdss.BS import BSClass as b
 from sdss.PL import PLClass as p
+from sdss.RigidPL import RigidPLClass as r_p
 from sdss.Detail import DetailClass as d
 import sdss.Budget as bd
 import sdss.Utility as u
@@ -31,7 +32,7 @@ def index(request):
     accbot_list = getAccountList(accbot_qs)
     accbot_listgroup = getAccountListByGroup()
     context = {
-        'i_list':       ['1','2','3','4','5'],
+        'i_list':       ['1','2','3','4','5', '6', '7', '8'],
         'b_or_c':       ['br', 'cr'],
         'journal_date': u.get_nowdt().strftime('%Y-%m-%d'),
         'accbot_dic':   accbot_dic,  # iru...?
@@ -439,6 +440,9 @@ def regist(request):
     register_corresp.append({'br_a': 'br_3_a', 'cr_a': 'cr_3_a', 'br_c': 'br_3_c', 'cr_c': 'cr_3_c'})
     register_corresp.append({'br_a': 'br_4_a', 'cr_a': 'cr_4_a', 'br_c': 'br_4_c', 'cr_c': 'cr_4_c'})
     register_corresp.append({'br_a': 'br_5_a', 'cr_a': 'cr_5_a', 'br_c': 'br_5_c', 'cr_c': 'cr_5_c'})
+    register_corresp.append({'br_a': 'br_6_a', 'cr_a': 'cr_6_a', 'br_c': 'br_6_c', 'cr_c': 'cr_6_c'})
+    register_corresp.append({'br_a': 'br_7_a', 'cr_a': 'cr_7_a', 'br_c': 'br_7_c', 'cr_c': 'cr_7_c'})
+    register_corresp.append({'br_a': 'br_8_a', 'cr_a': 'cr_8_a', 'br_c': 'br_8_c', 'cr_c': 'cr_8_c'})
     registerd = False
     note_temp = ''
     for cor in register_corresp:
@@ -529,7 +533,8 @@ def journal(request):
     # TODO extract year, month ...etc
     journal_qs = db.Journal.objects.order_by('-date')
     journal_list = getJournalList(journal_qs)
-    yearList = ['2019', '2018',]
+    # yearList = ['2019', '2018',]
+    yearList = u.getSelectableYearList()
     context = {
         'journal_list': journal_list,
         'year_list':    yearList,
@@ -627,6 +632,68 @@ def pl(request, year=0):
         'message': '',
     }
     return render(request, 'pl.html', context)
+
+
+def rigid_pl(request, year=0):
+    year = u.cleanYear(year)
+    r_pl = r_p()
+
+    #売上総利益
+    netRevenue = r_pl.getNetRevenue(year)
+    costOfSales = r_pl.getCostOfSales(year)
+    grossMarginList = []
+    for i in range(12):
+        grossMarginList.append(netRevenue['total'][i] - costOfSales['total'][i])
+    grossMargin = {
+        '収益': netRevenue,
+        '売上原価': costOfSales,
+        '売上総利益': grossMarginList,
+    }
+    #
+    # #限界利益
+    # taxAndFocedCost = r_pl.getTaxAndForcedCost(year)
+    # lifeCost = r_pl.getLifeCost(year)
+    # limitIncomeList = []
+    # for i in range(12):
+    #     limitIncomeList.append(grossMarginList[i] - taxAndFocedCost[i] - lifeCost[i])
+    # limitIncome = {
+    #     '一般費':  taxAndFocedCost,
+    #     '生活費':  lifeCost,
+    #     '限界利益':limitIncomeList,
+    # }
+    #
+    # #その他の収益・費用等
+    # nonOperatingCost = r_pl.getNonOperatingCost(year)
+    # nonOperatingIncome = r_pl.getNonOperatingIncome(year)
+    # entertainmentCost = r_pl.getEntertainmentCost(year)
+    #
+    # netIncomeList = []
+    # for i in range(12):
+    #     netIncomeList.append(
+    #             limitIncomeList[i]
+    #          -  nonOperatingCost[i]
+    #          +  nonOperatingIncome[i]
+    #          -  entertainmentCost[i]
+    #     )
+    # netIncome = {
+    #     '営業外収益': nonOperatingIncome,
+    #     '営業外費用': nonOperatingCost,
+    #     '娯楽費': entertainmentCost,
+    #     '当月純利益': netIncomeList,
+    # }
+
+    yearList = u.getSelectableYearList()
+    context = {
+        'year_list': yearList,
+        '売上総利益': grossMargin,
+        # '限界利益': limitIncome,
+        # '当月純利益': netIncome,
+        # 'month_list': getMonthList(),
+        # 'view_name': 'sdss 2.0 Rigid PL view',
+        # 'target_year': str(year),
+        # 'message': '',
+    }
+    return render(request, 'rigid_pl.html', context)
 
 
 def detail(request, mid_class_uid=1, year=0):

@@ -21,13 +21,11 @@ AccType = {
 
 def getSelectableYearList():
     ret = []
+    ret.append('2020')
     ret.append('2019')
     ret.append('2018')
     return ret
 
-
-def getSelectableYearList():
-    pass
 
 
 def cleanYear(year):
@@ -43,6 +41,7 @@ def cleanYear(year):
     except TypeError:
         print('TypeError')
         return  datetime.now().year
+
 
 def getStrTimeStamp():
     '''create timestamp string from now date and time. ex. 2019092712836724 '''
