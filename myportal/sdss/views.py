@@ -552,7 +552,8 @@ def asset_suii(request, year=0):
     bslist.pop('他人資本', 'no match')
     bslist.pop('評価換算差額等', 'no match')
     bslist.pop('固定資産', 'no match')
-    yearList = ['2019', '2018',]
+    # yearList = ['2019', '2018',]
+    yearList = u.getSelectableYearList()
     monthList = getMonthList()
     colors = (
         (0,153,255,10),
@@ -583,7 +584,8 @@ def summary(request, year=0):
     pl = p()
     bslist = bs.getMiddleYearStatement(year)
     pllist = pl.getMiddleYearStatement(year)
-    yearList = ['2019', '2018',]
+    # yearList = ['2019', '2018',]
+    yearList = u.getSelectableYearList()
     context = {
         'bs_list': bslist,
         'pl_list': pllist,
@@ -604,7 +606,8 @@ def bs(request, year=0):
     year = u.cleanYear(year)
     bs_class = b()
     bslist = bs_class.getBottomYearStatement(year)
-    yearList = ['2019', '2018',]
+    # yearList = ['2019', '2018',]
+    yearList = u.getSelectableYearList()
     context = {
         'bs_list': list,
         'year_list': yearList,
@@ -621,7 +624,8 @@ def pl(request, year=0):
     year = u.cleanYear(year)
     pl = p()
     pllist = pl.getBottomYearStatement(year)
-    yearList = ['2019', '2018',]
+    # yearList = ['2019', '2018',]
+    yearList = u.getSelectableYearList()
     context = {
         'year_list': yearList,
         'pl_list': pllist,
@@ -699,7 +703,8 @@ def rigid_pl(request, year=0):
 def detail(request, mid_class_uid=1, year=0):
     year = u.cleanYear(year)
     d_class = d()
-    selectable_year_list = ['2019', '2018',]
+    # selectable_year_list = ['2019', '2018',]
+    selectable_year_list = u.getSelectableYearList()
     month_list = range(1,13) # =['1','2', .. '12']
     mid_class_list = d_class.getTopMidAccList()
     acc_amount_list = d_class.getClassificationDetail(mid_class_uid, year)
@@ -804,7 +809,24 @@ def getExportJournalList(qs_journal):
     return d
 
 
-
+def wants_list(request):
+    qs_bot = db.WantsList.objects.all()
+    d = []
+    for entry in qs_bot:
+        d.append({
+            'id': entry.uid,
+            'name': entry.name,
+            'date': entry.date,
+            'amount': entry.amount,
+            'note': entry.note,
+        })
+    context = {
+        'view_name': 'ほしいものリスト',
+        # 'year': year,
+        # 'selectable_year_list': selectable_year_list,
+        'wants_list': d,
+    }
+    return render(request, 'wants_list.html', context)
 
 
 #TODO すでに処理が重そうな気がするので今後パフォーマンスに関する何らかの処置が必要かも

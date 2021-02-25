@@ -157,18 +157,19 @@ class PrepaidList(models.Model):
         managed = True
         db_table = 'prepaid_list'
 
+
 class WantsList(models.Model):
     uid = models.AutoField(primary_key=True)
     name = models.CharField(max_length=45)
     is_delete = models.BooleanField()
     planning_date = models.CharField(max_length=10)
     buy_date = models.CharField(max_length=10)
-    #name = models.ForeignKey(Journal, models.DO_NOTHING, db_column='uid', related_name='journal_uid')
-    #br_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
-    #cr_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
+    # name = models.ForeignKey(Journal, models.DO_NOTHING, db_column='uid', related_name='journal_uid')
+    # br_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
+    # cr_acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
     amount = models.IntegerField()
-    #account_group_uid = models.ForeignKey(AccountGroup, models.DO_NOTHING, db_column='account_group_uid', related_name='account_group_uid')
-    #acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
+    # account_group_uid = models.ForeignKey(AccountGroup, models.DO_NOTHING, db_column='account_group_uid', related_name='account_group_uid')
+    # acc_bot_uid = models.ForeignKey(AccBot, models.DO_NOTHING, db_column='acc_bot_uid', related_name='ag_acc_bot_uid')
     note = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
