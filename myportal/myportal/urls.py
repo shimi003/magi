@@ -24,8 +24,8 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 ]
 
-if settings.DEBUG:
-    import debug_toolbar
-    urlpatterns += (
-        path('sdss/', include(debug_toolbar.urls)),
-    )
+#if settings.DEBUG:
+#    import debug_toolbar
+#    urlpatterns += (
+#        path('sdss/', include(debug_toolbar.urls)),
+#    )

@@ -83,8 +83,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'sdss2_0',
-        'USER': 'root',
-        'PASSWORD': '',
+        'USER': 'sdss_user',
+        'PASSWORD': 'sdss_user',
         'HOST': '',
         'PORT': '',
     },
