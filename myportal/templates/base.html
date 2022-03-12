@@ -22,13 +22,13 @@
     <br />
     <div  class="container-fluid">
         {# TODO urlタグを使ってURLのハードコーディングを回避する #}
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/">Input</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'sdss_index' %}">Input</a>
         <a class="btn btn-default border border-primary big" href="{% url 'summary' %}">Summary</a>
         <!--<a class="btn btn-default border border-primary big" href="/magi/sdss/summary/">Summary</a>-->
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/bs/">BS</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/pl/">PL</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/journal/">Journal</a>
-        <a class="btn btn-default border border-primary big" href="/magi/sdss/suii/">Suii</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'bs' %}">BS</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'pl' %}">PL</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'journal' %}">Journal</a>
+        <a class="btn btn-default border border-primary big" href="{% url 'suii' %}/">Suii</a>
         <a class="btn btn-default border border-primary big" href="{% url 'detail' %}">Detail</a>
         <a class="btn btn-default border border-primary big" href="{% url 'regularly_view' %}">Regularly-Payment</a>
         <a class="btn btn-default border border-primary big" href="{% url 'acc_list' %}">Account List</a>
