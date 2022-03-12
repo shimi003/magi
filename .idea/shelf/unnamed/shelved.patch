@@ -1,0 +1,72 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"67200295-64c2-4312-ae3e-41545a55c3ed\" name=\"Default Changelist\" comment=\"\">\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/codeStyles/Project.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/.idea/vcs.xml\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/myportal/sdss/WantsList.py\" afterDir=\"false\" />\r\n      <change afterPath=\"$PROJECT_DIR$/myportal/templates/wants_list.html\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/myportal/sdss/Utility.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/myportal/sdss/Utility.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/myportal/sdss/models.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/myportal/sdss/models.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/myportal/sdss/urls.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/myportal/sdss/urls.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/myportal/sdss/views.py\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/myportal/sdss/views.py\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/myportal/templates/base.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/myportal/templates/base.html\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitToolBoxStore\">\r\n    <option name=\"projectConfigVersion\" value=\"2\" />\r\n  </component>\r\n  <component name=\"IdeDocumentHistory\">\r\n    <option name=\"CHANGED_PATHS\">\r\n      <list>\r\n        <option value=\"$PROJECT_DIR$/myportal/sdss/Utility.py\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"ProjectFrameBounds\" extendedState=\"4\">\r\n    <option name=\"x\" value=\"1919\" />\r\n    <option name=\"width\" value=\"1919\" />\r\n    <option name=\"height\" value=\"2133\" />\r\n  </component>\r\n  <component name=\"ProjectId\" id=\"1ovb2bDSsar9uBZzV6ITbUcrxSl\" />\r\n  <component name=\"ProjectView\">\r\n    <navigator proportions=\"\" version=\"1\">\r\n      <foldersAlwaysOnTop value=\"true\" />\r\n    </navigator>\r\n    <panes>\r\n      <pane id=\"Scope\" />\r\n      <pane id=\"ProjectPane\">\r\n        <subPane>\r\n          <expand>\r\n            <path>\r\n              <item name=\"magi\" type=\"b2602c69:ProjectViewProjectNode\" />\r\n              <item name=\"magi\" type=\"462c0819:PsiDirectoryNode\" />\r\n            </path>\r\n            <path>\r\n              <item name=\"magi\" type=\"b2602c69:ProjectViewProjectNode\" />\r\n              <item name=\"magi\" type=\"462c0819:PsiDirectoryNode\" />\r\n              <item name=\"myportal\" type=\"462c0819:PsiDirectoryNode\" />\r\n            </path>\r\n            <path>\r\n              <item name=\"magi\" type=\"b2602c69:ProjectViewProjectNode\" />\r\n              <item name=\"magi\" type=\"462c0819:PsiDirectoryNode\" />\r\n              <item name=\"myportal\" type=\"462c0819:PsiDirectoryNode\" />\r\n              <item name=\"sdss\" type=\"462c0819:PsiDirectoryNode\" />\r\n            </path>\r\n          </expand>\r\n          <select />\r\n        </subPane>\r\n      </pane>\r\n    </panes>\r\n  </component>\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\">\r\n    <property name=\"WebServerToolWindowFactoryState\" value=\"false\" />\r\n    <property name=\"last_opened_file_path\" value=\"$PROJECT_DIR$/myportal/templates\" />\r\n  </component>\r\n  <component name=\"RecentsManager\">\r\n    <key name=\"CopyFile.RECENT_KEYS\">\r\n      <recent name=\"$PROJECT_DIR$/myportal/templates\" />\r\n    </key>\r\n  </component>\r\n  <component name=\"SpellCheckerSettings\" RuntimeDictionaries=\"0\" Folders=\"0\" CustomDictionaries=\"0\" DefaultDictionary=\"application-level\" UseSingleDictionary=\"true\" transferred=\"true\" />\r\n  <component name=\"SvnConfiguration\">\r\n    <configuration />\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"67200295-64c2-4312-ae3e-41545a55c3ed\" name=\"Default Changelist\" comment=\"\" />\r\n      <created>1614086859112</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1614086859112</updated>\r\n      <workItem from=\"1614169806323\" duration=\"3082000\" />\r\n    </task>\r\n    <servers />\r\n  </component>\r\n  <component name=\"ToolWindowManager\">\r\n    <frame x=\"1919\" y=\"0\" width=\"1919\" height=\"2133\" extended-state=\"4\" />\r\n    <layout>\r\n      <window_info id=\"DB Browser\" />\r\n      <window_info id=\"Favorites\" side_tool=\"true\" />\r\n      <window_info content_ui=\"combo\" id=\"Project\" order=\"0\" visible=\"true\" weight=\"0.24960506\" />\r\n      <window_info id=\"Structure\" order=\"1\" side_tool=\"true\" weight=\"0.25\" />\r\n      <window_info anchor=\"bottom\" id=\"DB Execution Console\" />\r\n      <window_info active=\"true\" anchor=\"bottom\" id=\"Version Control\" visible=\"true\" weight=\"0.32966483\" />\r\n      <window_info anchor=\"bottom\" id=\"Python Console\" />\r\n      <window_info anchor=\"bottom\" id=\"Tail\" />\r\n      <window_info anchor=\"bottom\" id=\"Terminal\" />\r\n      <window_info anchor=\"bottom\" id=\"Event Log\" side_tool=\"true\" />\r\n      <window_info anchor=\"bottom\" id=\"Message\" order=\"0\" />\r\n      <window_info anchor=\"bottom\" id=\"Find\" order=\"1\" />\r\n      <window_info anchor=\"bottom\" id=\"Run\" order=\"2\" />\r\n      <window_info anchor=\"bottom\" id=\"Debug\" order=\"3\" weight=\"0.4\" />\r\n      <window_info anchor=\"bottom\" id=\"Cvs\" order=\"4\" weight=\"0.25\" />\r\n      <window_info anchor=\"bottom\" id=\"Inspection\" order=\"5\" weight=\"0.4\" />\r\n      <window_info anchor=\"bottom\" id=\"TODO\" order=\"6\" />\r\n      <window_info anchor=\"right\" id=\"Commander\" internal_type=\"SLIDING\" order=\"0\" type=\"SLIDING\" weight=\"0.4\" />\r\n      <window_info anchor=\"right\" id=\"Ant Build\" order=\"1\" weight=\"0.25\" />\r\n      <window_info anchor=\"right\" content_ui=\"combo\" id=\"Hierarchy\" order=\"2\" weight=\"0.25\" />\r\n    </layout>\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"editorHistoryManager\">\r\n    <entry file=\"file://$PROJECT_DIR$/myportal/sdss/Utility.py\">\r\n      <provider selected=\"true\" editor-type-id=\"text-editor\">\r\n        <state relative-caret-position=\"690\">\r\n          <caret line=\"46\" column=\"22\" lean-forward=\"true\" selection-start-line=\"46\" selection-start-column=\"22\" selection-end-line=\"46\" selection-end-column=\"22\" />\r\n          <folding>\r\n            <element signature=\"e#0#50#0\" expanded=\"true\" />\r\n          </folding>\r\n        </state>\r\n      </provider>\r\n    </entry>\r\n    <entry file=\"file://$PROJECT_DIR$/myportal/sdss/views.py\">\r\n      <provider selected=\"true\" editor-type-id=\"text-editor\">\r\n        <state relative-caret-position=\"630\">\r\n          <caret line=\"42\" column=\"5\" lean-forward=\"true\" selection-start-line=\"42\" selection-start-column=\"5\" selection-end-line=\"42\" selection-end-column=\"5\" />\r\n          <folding>\r\n            <element signature=\"e#0#45#0\" expanded=\"true\" />\r\n          </folding>\r\n        </state>\r\n      </provider>\r\n    </entry>\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 054bc46cc0f7e26f379b6e4a70644ec0b7b8cda4)
++++ b/.idea/workspace.xml	(date 1647055329314)
+@@ -2,14 +2,7 @@
+ <project version="4">
+   <component name="ChangeListManager">
+     <list default="true" id="67200295-64c2-4312-ae3e-41545a55c3ed" name="Default Changelist" comment="">
+-      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/myportal/sdss/WantsList.py" afterDir="false" />
+-      <change afterPath="$PROJECT_DIR$/myportal/templates/wants_list.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/myportal/sdss/Utility.py" beforeDir="false" afterPath="$PROJECT_DIR$/myportal/sdss/Utility.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/myportal/sdss/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/myportal/sdss/models.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/myportal/sdss/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/myportal/sdss/urls.py" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/myportal/sdss/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/myportal/sdss/views.py" afterDir="false" />
++      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+       <change beforePath="$PROJECT_DIR$/myportal/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/myportal/templates/base.html" afterDir="false" />
+     </list>
+     <option name="SHOW_DIALOG" value="false" />
+@@ -36,6 +29,9 @@
+         <option value="$PROJECT_DIR$/myportal/sdss/Utility.py" />
+       </list>
+     </option>
++  </component>
++  <component name="MarkdownSettingsMigration">
++    <option name="stateVersion" value="1" />
+   </component>
+   <component name="ProjectFrameBounds" extendedState="4">
+     <option name="x" value="1919" />
+@@ -78,6 +74,8 @@
+     <option name="showLibraryContents" value="true" />
+   </component>
+   <component name="PropertiesComponent">
++    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
++    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+     <property name="WebServerToolWindowFactoryState" value="false" />
+     <property name="last_opened_file_path" value="$PROJECT_DIR$/myportal/templates" />
+   </component>
+@@ -98,6 +96,8 @@
+       <option name="presentableId" value="Default" />
+       <updated>1614086859112</updated>
+       <workItem from="1614169806323" duration="3082000" />
++      <workItem from="1647054668575" duration="430000" />
++      <workItem from="1647055118079" duration="210000" />
+     </task>
+     <servers />
+   </component>
+@@ -128,6 +128,17 @@
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+     <option name="version" value="3" />
++  </component>
++  <component name="Vcs.Log.Tabs.Properties">
++    <option name="TAB_STATES">
++      <map>
++        <entry key="MAIN">
++          <value>
++            <State />
++          </value>
++        </entry>
++      </map>
++    </option>
+   </component>
+   <component name="editorHistoryManager">
+     <entry file="file://$PROJECT_DIR$/myportal/sdss/Utility.py">

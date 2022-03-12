@@ -463,7 +463,9 @@ def regist(request):
             registerd = True
             log.info('register journal object')
     # TODO ハードコーディングなのでショートカットにするとか200
-    return redirect('/magi/sdss')
+    href = "{% url 'journal' %}"
+    #return redirect('/magi/sdss')
+    return redirect(reverse('sdss_index'))
 
 
 def regist_regularly_payment(request):
@@ -484,7 +486,8 @@ def regist_regularly_payment(request):
                 cr_amount = u.getEmptyOrValueInt(qs.amount_per_month),
                 note = note,
             )
-    return redirect('/magi/sdss/regularly-payment/')
+    #return redirect('/magi/sdss/regularly-payment/')
+    return redirect(reverse('regularly_view'))
 
 
 import openpyxl
