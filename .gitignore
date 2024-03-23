@@ -1,6 +1,9 @@
 .venv
+.idea
+.vscode
 __pycache__/
 /data/*.*
+*.sql
 *.json
 *.db
 *.dump

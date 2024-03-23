@@ -25,7 +25,7 @@ SECRET_KEY = 'vrdq-w(^ww((5&9!l7r$vb&bx&5rt&4@xi$=(ptpm8k&gm$xq!'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.20', '127.0.0.1', 'localhost']
+ALLOWED_HOSTS = ['192.168.1.20', '192.168.1.31', '127.0.0.1', 'localhost']
 
 
 # Application definition

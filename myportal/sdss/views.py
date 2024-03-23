@@ -13,7 +13,7 @@ from django.db.models.functions import Left
 
 from datetime import datetime, timezone, timedelta
 import logging as log
-from dateutil.relativedelta import relativedelta
+# from dateutil.relativedelta import relativedelta
 
 from sdss.BS import BSClass as b
 from sdss.PL import PLClass as p
